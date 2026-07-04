@@ -87,8 +87,10 @@ export default function SingleFacultyPage() {
 
   // The firebaseKey is the sanitized base ID used as the Firestore map key
   const firebaseKey = sanitizeFacultyKey(matchedFaculty?.id ?? baseId);
-
-  const details = (facultyDetailsData as Record<string, any>)[firebaseKey] || null;
+  
+  // The details JSON uses the original unsanitized ID (e.g. "Dr. Hari Kishan Kondaveeti")
+  const detailsKey = matchedFaculty?.id ?? baseId;
+  const details = (facultyDetailsData as Record<string, any>)[detailsKey] || null;
 
   useEffect(() => {
     if (hasRatingsInParams) return; // already have real ratings from query params
