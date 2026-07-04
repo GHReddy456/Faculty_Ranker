@@ -202,7 +202,7 @@ export default function SingleFacultyPage() {
       <footer className="mt-auto flex w-full flex-col items-center gap-4 border-t border-white/5 bg-surface-container-lowest py-8 backdrop-blur-md">
         <div className="flex gap-8">
           <a className="font-label-md text-label-md text-tertiary underline opacity-80 transition-colors hover:text-primary hover:opacity-100" href="https://github.com/GHReddy456/Faculty_Ranker.git">GitHub</a>
-          <a className="font-label-md text-label-md text-tertiary underline opacity-80 transition-colors hover:text-primary hover:opacity-100" href="mailto:harigaddam2006@gmail.com">Contact us</a>
+          <a className="font-label-md text-label-md text-tertiary underline opacity-80 transition-colors hover:text-primary hover:opacity-100" href="https://mail.google.com/mail/?view=cm&to=harigaddam2006@gmail.com" target="_blank" rel="noopener noreferrer">Contact us</a>
         </div>
         <p className="font-body-md text-body-md text-on-surface-variant">© 2023 Faculty Ranker. All rights reserved.</p>
       </footer>
