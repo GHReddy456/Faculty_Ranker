@@ -3,10 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "dev": "npx -y node@20 ./node_modules/next/dist/bin/next dev",
+    "build": "npx -y node@20 ./node_modules/next/dist/bin/next build",
+    "start": "npx -y node@20 ./node_modules/next/dist/bin/next start",
+    "lint": "npx -y node@20 ./node_modules/next/dist/bin/next lint"
+  },
+  "engines": {
+    "node": "20.x"
   },
   "dependencies": {
     "@types/node": "20.5.0",

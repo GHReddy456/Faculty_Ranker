@@ -115,8 +115,8 @@ export default function Home() {
 
       <footer className="mt-auto flex w-full flex-col items-center gap-6 border-t border-white/5 bg-surface-container-lowest py-12 backdrop-blur-md">
         <div className="flex items-center gap-12">
-          <a className="font-label-md text-label-md text-on-surface-variant underline opacity-80 transition-colors hover:text-primary hover:opacity-100" href="https://github.com/Sarath191181208/faculty-ranker">GitHub</a>
-          <a className="font-label-md text-label-md text-on-surface-variant underline opacity-80 transition-colors hover:text-primary hover:opacity-100" href="https://mail.google.com/mail/?view=cm&to=facultyranker@gmail.com">Contact us</a>
+          <a className="font-label-md text-label-md text-on-surface-variant underline opacity-80 transition-colors hover:text-primary hover:opacity-100" href="https://github.com/GHReddy456/Faculty_Ranker.git">GitHub</a>
+          <a className="font-label-md text-label-md text-on-surface-variant underline opacity-80 transition-colors hover:text-primary hover:opacity-100" href="mailto:harigaddam2006@gmail.com">Contact us</a>
         </div>
         <div className="flex flex-col items-center gap-2">
           <span className="font-headline-md text-headline-md text-on-surface opacity-50">Faculty Ranker</span>
