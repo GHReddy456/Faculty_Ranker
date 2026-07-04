@@ -19,9 +19,8 @@ export default function Home() {
           <span className="font-headline-md text-headline-md font-bold text-on-surface">Faculty Ranker</span>
         </div>
         <nav className="hidden items-center gap-8 md:flex">
-          <Link className="border-b-2 border-primary pb-1 font-label-md text-label-md text-primary" href="/showFaculty">All Faculty</Link>
-          <a className="font-label-md text-label-md text-on-surface-variant transition-all duration-300 hover:text-on-surface" href="#">Departments</a>
-          <a className="font-label-md text-label-md text-on-surface-variant transition-all duration-300 hover:text-on-surface" href="#">About</a>
+          <Link className="border-b-2 border-primary pb-1 font-label-md text-label-md text-primary" href="/">Home</Link>
+          <Link className="font-label-md text-label-md text-on-surface-variant transition-all duration-300 hover:text-on-surface" href="/showFaculty">All Faculty</Link>
         </nav>
         <div className="flex items-center gap-4">
           {!user ? (

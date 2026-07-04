@@ -4,10 +4,16 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { queryFacultyData } from "@/app/showFaculty/query_faculty";
 import { getFacultyRating } from "@/firebase/getFacultyDetails";
+import { useAuth } from "@/context/AuthContext";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/firebase/firebase";
+import { writeFacultyRating } from "@/firebase/starRating";
 
 export default function SingleFacultyPage() {
   const params = useParams();
   const searchParams = useSearchParams();
+  const { user, signInWithGoogle, signOutWithGoogle } = useAuth();
+
   const [hovered, setHovered] = useState<Record<string, number>>({});
   const [selected, setSelected] = useState<Record<string, number>>({});
 
@@ -60,21 +66,20 @@ export default function SingleFacultyPage() {
 
   const [loadingRatings, setLoadingRatings] = useState(!hasRatingsInParams);
 
+  // Determine the partition number — prefer query param, then queryFacultyData lookup
+  const partitionFromParam = searchParams.get("partition_number");
+  const partitionNumber =
+    partitionFromParam !== null
+      ? Number(partitionFromParam)
+      : (matchedFaculty?.partition_number ?? 0);
+
+  // The raw facultyId from the URL may be suffixed like "FIREBASE_KEY-pageIndex-listIndex"
+  // Strip the suffix to get the original Firebase document field key
+  const rawId = String(facultyId);
+  const firebaseKey = matchedFaculty?.id ?? rawId.split(/-\d+-\d+$/)[0];
+
   useEffect(() => {
     if (hasRatingsInParams) return; // already have real ratings from query params
-
-    // Determine the partition number — prefer query param, then queryFacultyData lookup
-    const partitionFromParam = searchParams.get("partition_number");
-    const partitionNumber =
-      partitionFromParam !== null
-        ? Number(partitionFromParam)
-        : (matchedFaculty?.partition_number ?? 0);
-
-    // The raw facultyId from the URL may be suffixed like "FIREBASE_KEY-pageIndex-listIndex"
-    // Strip the suffix to get the original Firebase document field key
-    const rawId = String(facultyId);
-    // queryFacultyData ID (exact match) wins; otherwise use the first segment before "-X-Y"
-    const firebaseKey = matchedFaculty?.id ?? rawId.split(/-\d+-\d+$/)[0];
 
     setLoadingRatings(true);
     getFacultyRating(firebaseKey, partitionNumber)
@@ -82,7 +87,85 @@ export default function SingleFacultyPage() {
         if (data) setRatings(data);
       })
       .finally(() => setLoadingRatings(false));
-  }, [facultyId, hasRatingsInParams, matchedFaculty, searchParams]);
+  }, [firebaseKey, partitionNumber, hasRatingsInParams]);
+
+  // Auth & Rating submission logic
+  const [originalUserRating, setOriginalUserRating] = useState<{
+    attendance_rating: number | null;
+    correction_rating: number | null;
+    teaching_rating: number | null;
+  }>({
+    attendance_rating: null,
+    correction_rating: null,
+    teaching_rating: null,
+  });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const ratingDocId = user ? `${firebaseKey}_${user.uid}` : "";
+
+  useEffect(() => {
+    if (!user || !firebaseKey) return;
+    const fetchUserRating = async () => {
+      const docRef = doc(db, "ratings", ratingDocId);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        const r = {
+          attendance_rating: data.attendance_rating ?? null,
+          correction_rating: data.correction_rating ?? null,
+          teaching_rating: data.teaching_rating ?? null,
+        };
+        setOriginalUserRating(r);
+        setSelected({
+          attendance: r.attendance_rating ?? 0,
+          correction: r.correction_rating ?? 0,
+          teaching: r.teaching_rating ?? 0,
+        });
+      }
+    };
+    fetchUserRating();
+  }, [user, firebaseKey, ratingDocId]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) {
+      signInWithGoogle();
+      return;
+    }
+    
+    if (!selected.attendance && !selected.correction && !selected.teaching) {
+       return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const newRating = {
+        attendance_rating: selected.attendance || originalUserRating.attendance_rating,
+        correction_rating: selected.correction || originalUserRating.correction_rating,
+        teaching_rating: selected.teaching || originalUserRating.teaching_rating,
+      };
+
+      await writeFacultyRating(
+        partitionNumber,
+        firebaseKey,
+        ratingDocId,
+        originalUserRating,
+        newRating
+      );
+
+      // Re-fetch overall ratings from Firebase to reflect immediately
+      const updatedData = await getFacultyRating(firebaseKey, partitionNumber);
+      if (updatedData) {
+         setRatings(updatedData);
+      }
+      
+      setOriginalUserRating(newRating);
+    } catch (error) {
+      console.error("Error submitting rating:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const attendanceRating = ratings?.attendance_rating ?? null;
   const correctionRating = ratings?.correction_rating ?? null;
@@ -110,9 +193,16 @@ export default function SingleFacultyPage() {
           <span className="font-headline-md text-headline-md font-bold text-on-surface">Faculty Ranker</span>
         </div>
         <nav className="hidden items-center gap-8 md:flex">
+          <a className="font-label-md text-label-md text-on-surface-variant transition-all duration-300 hover:text-on-surface" href="/">Home</a>
           <a className="border-b-2 border-primary pb-1 font-label-md text-label-md text-primary" href="/showFaculty">All Faculty</a>
-          <button className="rounded-full border border-primary/30 px-6 py-2 font-label-md text-label-md text-primary transition-all duration-300 hover:bg-white/5 active:scale-95">Sign In</button>
         </nav>
+        <div className="hidden md:block">
+          {!user ? (
+            <button onClick={signInWithGoogle} className="rounded-full border border-primary/30 px-6 py-2 font-label-md text-label-md text-primary transition-all duration-300 hover:bg-white/5 active:scale-95">Sign In</button>
+          ) : (
+            <button onClick={signOutWithGoogle} className="rounded-full border border-error/30 px-6 py-2 font-label-md text-label-md text-error transition-all duration-300 hover:bg-error/10 active:scale-95">Sign Out</button>
+          )}
+        </div>
       </header>
 
       <main className="mx-auto flex w-full max-w-container-max flex-grow flex-col px-margin-mobile pb-16 pt-24 md:px-margin-desktop">
@@ -158,7 +248,7 @@ export default function SingleFacultyPage() {
               <span className="material-symbols-outlined text-primary">rate_review</span>
               Rate the faculty
             </h2>
-            <form className="space-y-10" onSubmit={(event) => event.preventDefault()}>
+            <form className="space-y-10" onSubmit={handleSubmit}>
               <div className="grid gap-10">
                 {ratingSections.map((section) => (
                   <div key={section.key} className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
@@ -176,7 +266,7 @@ export default function SingleFacultyPage() {
                         return (
                           <span
                             key={`${section.key}-${value}`}
-                            className={`material-symbols-outlined rating-star text-3xl ${isActive ? "active" : ""}`}
+                            className={`material-symbols-outlined rating-star text-3xl cursor-pointer ${isActive ? "text-primary drop-shadow-[0_0_8px_rgba(var(--color-primary),0.5)]" : "text-white/20"} transition-all duration-200 hover:scale-110`}
                             onMouseEnter={() => setHovered((prev) => ({ ...prev, [section.key]: value }))}
                             onMouseLeave={() => setHovered((prev) => ({ ...prev, [section.key]: 0 }))}
                             onClick={() => setSelected((prev) => ({ ...prev, [section.key]: value }))}
@@ -190,8 +280,8 @@ export default function SingleFacultyPage() {
                 ))}
               </div>
               <div className="border-t border-white/5 pt-8">
-                <button className="rounded-xl bg-primary px-12 py-4 font-headline-md text-on-primary-fixed transition-all duration-300 hover:bg-primary-fixed-dim hover:shadow-[0_0_20px_rgba(186,200,220,0.4)] active:scale-95">
-                  Submit
+                <button type="submit" disabled={isSubmitting} className="rounded-xl bg-primary px-12 py-4 font-headline-md text-on-primary-fixed transition-all duration-300 hover:bg-primary-fixed-dim hover:shadow-[0_0_20px_rgba(186,200,220,0.4)] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
+                  {isSubmitting ? "Submitting..." : (!user ? "Sign In to Rate" : "Submit")}
                 </button>
               </div>
             </form>
