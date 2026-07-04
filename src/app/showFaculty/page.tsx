@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import FallbackImage from "@/components/FallbackImage";
+import { useAuth } from "@/context/AuthContext";
 
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
@@ -12,39 +13,13 @@ import {
 import FacultyCard from "@/components/facultyCard";
 import { LoadingCardComponent } from "@/components/loadingCard";
 import { SearchBar } from "./searchbar";
-import { queryFacultyData } from "./query_faculty";
-import { getFacultyDetails, getFacultyRating } from "@/firebase/getFacultyDetails";
+import { queryFacultyData, FACULTY_DATA_VERSION } from "./query_faculty";
+import { getFacultyRating } from "@/firebase/getFacultyDetails";
 
 const ITEMS_PER_PAGE = 6;
 
-const mergeFacultyWithMetadata = (faculty: FacultyData, fallbackIndex: number): FacultyData => {
-  const metadata = queryFacultyData.find(
-    (item) => item.id === faculty.id || item.name === faculty.name,
-  );
-
-  return {
-    ...faculty,
-    id: faculty.id ?? metadata?.id ?? `${faculty.name ?? "faculty"}-${fallbackIndex}`,
-    name: faculty.name ?? metadata?.name ?? "Faculty",
-    image_url: faculty.image_url ?? metadata?.image_url ?? "/teach.jpg",
-    specialization: faculty.specialization ?? metadata?.specialization ?? "",
-  };
-};
-
-const getFilteredFacultyData = (facultyData: FacultyData[], searchTerm: string): FacultyData[] => {
-  const normalizedQuery = searchTerm.trim().toLowerCase();
-
-  if (!normalizedQuery) {
-    return facultyData;
-  }
-
-  return facultyData.filter((faculty) => {
-    const searchableText = `${faculty.name ?? ""} ${faculty.specialization ?? ""}`.toLowerCase();
-    return searchableText.includes(normalizedQuery);
-  });
-};
-
 export default function RenderFacultyGrid() {
+  const { user, signInWithGoogle, signOutWithGoogle } = useAuth();
   const [faculty_details_with_ratings, setFaculty_details_with_ratings] =
     useState<FacultyData[]>([]);
 
@@ -52,11 +27,9 @@ export default function RenderFacultyGrid() {
   const [pageIndex, setIndex] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
 
-  // When searching, totalPages is based on all matching faculty across all partitions.
-  // When not searching, it's based on all faculty split into pages.
   const filteredMeta = useMemo(() => {
     const q = searchTerm.trim().toLowerCase();
-    if (!q) return null; // null means "use normal pagination"
+    if (!q) return queryFacultyData; 
     return queryFacultyData.filter((f) =>
       `${f.name} ${f.specialization ?? ""}`.toLowerCase().includes(q)
     );
@@ -64,11 +37,11 @@ export default function RenderFacultyGrid() {
 
   const totalPages = Math.max(
     1,
-    Math.ceil((filteredMeta ?? queryFacultyData).length / ITEMS_PER_PAGE)
+    Math.ceil(filteredMeta.length / ITEMS_PER_PAGE)
   );
 
   useEffect(() => {
-    const previousState = getPreviousStateFromLocalStorage();
+    const previousState = getPreviousStateFromLocalStorage(FACULTY_DATA_VERSION);
     if (!previousState) return;
     setIndex(previousState.index);
   }, []);
@@ -83,70 +56,43 @@ export default function RenderFacultyGrid() {
     let isMounted = true;
     setLoading(true);
 
-    if (filteredMeta !== null) {
-      // SEARCH MODE: fetch ratings for the matching faculty from their real partitions
-      const pageSlice = filteredMeta.slice(
-        safePageIndex * ITEMS_PER_PAGE,
-        (safePageIndex + 1) * ITEMS_PER_PAGE
-      );
+    const pageSlice = filteredMeta.slice(
+      safePageIndex * ITEMS_PER_PAGE,
+      (safePageIndex + 1) * ITEMS_PER_PAGE
+    );
 
-      Promise.all(
-        pageSlice.map(async (meta, index) => {
-          const ratingData = await getFacultyRating(meta.id, meta.partition_number);
-          return {
-            id: `${meta.id}-${safePageIndex}-${index}`,
-            name: meta.name,
-            image_url: meta.image_url,
-            specialization: meta.specialization ?? "",
-            teaching_rating: ratingData?.teaching_rating ?? null,
-            attendance_rating: ratingData?.attendance_rating ?? null,
-            correction_rating: ratingData?.correction_rating ?? null,
-            num_teaching_ratings: ratingData?.num_teaching_ratings ?? null,
-            num_attendance_ratings: ratingData?.num_attendance_ratings ?? null,
-            num_correction_ratings: ratingData?.num_correction_ratings ?? null,
-            partition_number: meta.partition_number,
-          } as FacultyData;
-        })
-      )
-        .then((results) => {
-          if (!isMounted) return;
-          setFaculty_details_with_ratings(results);
-        })
-        .catch(() => {
-          if (!isMounted) return;
-          setFaculty_details_with_ratings([]);
-        })
-        .finally(() => {
-          if (isMounted) setLoading(false);
-        });
-    } else {
-      // NORMAL PAGINATION MODE: fetch the whole partition from Firebase
-      getFacultyDetails(safePageIndex)
-        .then((facultyData) => {
-          if (!isMounted) return;
-
-          const mergedFaculty = facultyData
-            .map((faculty, index) => mergeFacultyWithMetadata(faculty, index))
-            .slice(0, ITEMS_PER_PAGE);
-
-          setFaculty_details_with_ratings(
-            mergedFaculty.map((faculty, index) => ({
-              ...faculty,
-              id: `${faculty.id}-${safePageIndex}-${index}`,
-            }))
-          );
-        })
-        .catch(() => {
-          if (!isMounted) return;
-          setFaculty_details_with_ratings([]);
-        })
-        .finally(() => {
-          if (isMounted) {
-            setLoading(false);
-            savePreviousStateToLocalStorage({ index: safePageIndex });
-          }
-        });
-    }
+    Promise.all(
+      pageSlice.map(async (meta, index) => {
+        const ratingData = await getFacultyRating(meta.id, meta.partition_number);
+        return {
+          id: `${meta.id}-${safePageIndex}-${index}`,
+          name: meta.name,
+          image_url: meta.image_url ?? "/teach.jpg",
+          specialization: meta.specialization ?? "",
+          teaching_rating: ratingData?.teaching_rating ?? null,
+          attendance_rating: ratingData?.attendance_rating ?? null,
+          correction_rating: ratingData?.correction_rating ?? null,
+          num_teaching_ratings: ratingData?.num_teaching_ratings ?? null,
+          num_attendance_ratings: ratingData?.num_attendance_ratings ?? null,
+          num_correction_ratings: ratingData?.num_correction_ratings ?? null,
+          partition_number: meta.partition_number,
+        } as FacultyData;
+      })
+    )
+      .then((results) => {
+        if (!isMounted) return;
+        setFaculty_details_with_ratings(results);
+      })
+      .catch(() => {
+        if (!isMounted) return;
+        setFaculty_details_with_ratings([]);
+      })
+      .finally(() => {
+        if (isMounted) {
+          setLoading(false);
+          savePreviousStateToLocalStorage({ index: safePageIndex }, FACULTY_DATA_VERSION);
+        }
+      });
 
     return () => {
       isMounted = false;
@@ -172,6 +118,17 @@ export default function RenderFacultyGrid() {
           <Link className="border-b-2 border-primary pb-1 font-label-md text-label-md text-primary" href="/showFaculty">All Faculty</Link>
           <Link className="font-label-md text-label-md text-on-surface-variant transition-all duration-300 hover:text-on-surface" href="/">Home</Link>
         </nav>
+        <div className="flex items-center gap-4">
+          {!user ? (
+            <button onClick={signInWithGoogle} className="rounded-lg border border-primary/30 bg-primary px-6 py-2 font-label-md text-label-md text-on-primary-fixed transition-all duration-300 active:scale-95 hover:bg-primary/90">
+              Sign In
+            </button>
+          ) : (
+            <button onClick={signOutWithGoogle} className="rounded-lg border border-error/30 bg-error/10 px-6 py-2 font-label-md text-label-md text-error transition-all duration-300 active:scale-95 hover:bg-error/20">
+              Sign Out
+            </button>
+          )}
+        </div>
       </header>
 
       <main className="flex flex-grow flex-col px-margin-mobile pb-16 pt-32 md:px-margin-desktop">

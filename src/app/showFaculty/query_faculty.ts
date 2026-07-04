@@ -1,3 +1,6 @@
+// DATA_VERSION: bump this whenever faculty data changes to bust Vercel CDN cache
+export const FACULTY_DATA_VERSION = "2026-07-04-v3";
+
 export const queryFacultyData: FacultyQueryData[] = [
   {
     "name": "Dr. Ambuj Sharma",
