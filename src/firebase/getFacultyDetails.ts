@@ -1,6 +1,45 @@
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/firebase/firebase";
 
+/** Fetch the real ratings for a single faculty from Firebase.
+ *  Returns null if the faculty cannot be found. */
+export const getFacultyRating = async (
+  facultyId: string,
+  partitionNumber: number
+): Promise<{
+  teaching_rating: number | null;
+  attendance_rating: number | null;
+  correction_rating: number | null;
+  num_teaching_ratings: number | null;
+  num_attendance_ratings: number | null;
+  num_correction_ratings: number | null;
+} | null> => {
+  try {
+    const docRef = doc(db, "partition_faculty_2", partitionNumber.toString());
+    const docSnap = await getDoc(docRef);
+    if (!docSnap.exists()) return null;
+    const data = docSnap.data();
+    const facultyRaw = data?.[facultyId];
+    if (!facultyRaw) return null;
+
+    const toAvg = (total: number | null | undefined, count: number | null | undefined) =>
+      total != null && count != null && count > 0
+        ? parseFloat((total / count).toFixed(2))
+        : null;
+
+    return {
+      teaching_rating: toAvg(facultyRaw.teaching_rating, facultyRaw.num_teaching_ratings),
+      attendance_rating: toAvg(facultyRaw.attendance_rating, facultyRaw.num_attendance_ratings),
+      correction_rating: toAvg(facultyRaw.correction_rating, facultyRaw.num_correction_ratings),
+      num_teaching_ratings: facultyRaw.num_teaching_ratings ?? null,
+      num_attendance_ratings: facultyRaw.num_attendance_ratings ?? null,
+      num_correction_ratings: facultyRaw.num_correction_ratings ?? null,
+    };
+  } catch {
+    return null;
+  }
+};
+
 const fallbackFacultyData: FacultyData[] = [
   {
     id: "fallback-1",

@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { queryFacultyData } from "@/app/showFaculty/query_faculty";
+import { getFacultyRating } from "@/firebase/getFacultyDetails";
 
 export default function SingleFacultyPage() {
   const params = useParams();
@@ -12,17 +13,80 @@ export default function SingleFacultyPage() {
 
   const facultyId = params?.id ?? searchParams.get("id") ?? "unknown";
   const facultyName = searchParams.get("name") ?? "Dr. Aastha Madonna Sathe";
+
+  // Try to find the faculty in queryFacultyData to get partition_number and fallback info
   const matchedFaculty = queryFacultyData.find(
     (faculty) => faculty.id === facultyId || faculty.name === facultyName
   );
+
   const facultySpecialization =
     searchParams.get("specialization") ??
     matchedFaculty?.specialization ??
     "Computational Statistics, Stable Distributions, Time Series Analysis, Forecasting, Artificial Neural Networks";
   const facultyImage = searchParams.get("image_url") ?? matchedFaculty?.image_url ?? "/teach.jpg";
-  const attendanceRating = Number(searchParams.get("attendance_rating") ?? 3.98);
-  const correctionRating = Number(searchParams.get("correction_rating") ?? 3.59);
-  const teachingRating = Number(searchParams.get("teaching_rating") ?? 3.99);
+
+  // Ratings from query params (set when navigating from the main grid, which passes real Firebase data)
+  const qpAttendance = searchParams.get("attendance_rating");
+  const qpCorrection = searchParams.get("correction_rating");
+  const qpTeaching = searchParams.get("teaching_rating");
+  const qpNumTeaching = searchParams.get("num_teaching_ratings");
+  const qpNumAttendance = searchParams.get("num_attendance_ratings");
+  const qpNumCorrection = searchParams.get("num_correction_ratings");
+
+  // Whether the query params already carry real ratings (grid navigation)
+  // The fallback defaults in the old code were exactly 3.98/3.59/3.99, so if ALL three
+  // are absent we know we came from the dropdown and must fetch from Firebase.
+  const hasRatingsInParams = qpAttendance !== null && qpCorrection !== null && qpTeaching !== null;
+
+  const [ratings, setRatings] = useState<{
+    attendance_rating: number | null;
+    correction_rating: number | null;
+    teaching_rating: number | null;
+    num_teaching_ratings: number | null;
+    num_attendance_ratings: number | null;
+    num_correction_ratings: number | null;
+  } | null>(
+    hasRatingsInParams
+      ? {
+          attendance_rating: Number(qpAttendance),
+          correction_rating: Number(qpCorrection),
+          teaching_rating: Number(qpTeaching),
+          num_teaching_ratings: qpNumTeaching !== null ? Number(qpNumTeaching) : null,
+          num_attendance_ratings: qpNumAttendance !== null ? Number(qpNumAttendance) : null,
+          num_correction_ratings: qpNumCorrection !== null ? Number(qpNumCorrection) : null,
+        }
+      : null
+  );
+
+  const [loadingRatings, setLoadingRatings] = useState(!hasRatingsInParams);
+
+  useEffect(() => {
+    if (hasRatingsInParams) return; // already have real ratings from query params
+
+    // Determine the partition number — prefer query param, then queryFacultyData lookup
+    const partitionFromParam = searchParams.get("partition_number");
+    const partitionNumber =
+      partitionFromParam !== null
+        ? Number(partitionFromParam)
+        : (matchedFaculty?.partition_number ?? 0);
+
+    // The raw facultyId from the URL may be suffixed like "FIREBASE_KEY-pageIndex-listIndex"
+    // Strip the suffix to get the original Firebase document field key
+    const rawId = String(facultyId);
+    // queryFacultyData ID (exact match) wins; otherwise use the first segment before "-X-Y"
+    const firebaseKey = matchedFaculty?.id ?? rawId.split(/-\d+-\d+$/)[0];
+
+    setLoadingRatings(true);
+    getFacultyRating(firebaseKey, partitionNumber)
+      .then((data) => {
+        if (data) setRatings(data);
+      })
+      .finally(() => setLoadingRatings(false));
+  }, [facultyId, hasRatingsInParams, matchedFaculty, searchParams]);
+
+  const attendanceRating = ratings?.attendance_rating ?? null;
+  const correctionRating = ratings?.correction_rating ?? null;
+  const teachingRating = ratings?.teaching_rating ?? null;
 
   const ratingSections = useMemo(
     () => [
@@ -32,6 +96,9 @@ export default function SingleFacultyPage() {
     ],
     []
   );
+
+  const formatRating = (val: number | null) =>
+    val == null ? "—" : val.toFixed(2);
 
   return (
     <div className="min-h-screen flex flex-col bg-surface-dim text-on-surface font-body-md">
@@ -65,12 +132,18 @@ export default function SingleFacultyPage() {
               </div>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 {[
-                  { label: "Attendance", value: attendanceRating.toFixed(2) },
-                  { label: "Correction", value: correctionRating.toFixed(2) },
-                  { label: "Teaching", value: teachingRating.toFixed(2) },
+                  { label: "Attendance", value: attendanceRating },
+                  { label: "Correction", value: correctionRating },
+                  { label: "Teaching", value: teachingRating },
                 ].map((item) => (
                   <div key={item.label} className="glass-card inner-glow flex flex-col items-center justify-center gap-1 rounded-2xl border-primary/20 p-4">
-                    <span className={`font-rating-number text-rating-number ${item.label === "Correction" ? "text-tertiary" : "text-primary"}`}>{item.value}</span>
+                    {loadingRatings ? (
+                      <span className="h-8 w-16 animate-pulse rounded-md bg-white/10" />
+                    ) : (
+                      <span className={`font-rating-number text-rating-number ${item.label === "Correction" ? "text-tertiary" : "text-primary"}`}>
+                        {formatRating(item.value)}
+                      </span>
+                    )}
                     <span className="font-label-md text-label-md uppercase tracking-widest text-on-secondary-container">{item.label}</span>
                   </div>
                 ))}
@@ -128,8 +201,8 @@ export default function SingleFacultyPage() {
 
       <footer className="mt-auto flex w-full flex-col items-center gap-4 border-t border-white/5 bg-surface-container-lowest py-8 backdrop-blur-md">
         <div className="flex gap-8">
-          <a className="font-label-md text-label-md text-tertiary underline opacity-80 transition-colors hover:text-primary hover:opacity-100" href="https://github.com/Sarath191181208/faculty-ranker">GitHub</a>
-          <a className="font-label-md text-label-md text-tertiary underline opacity-80 transition-colors hover:text-primary hover:opacity-100" href="https://mail.google.com/mail/?view=cm&to=facultyranker@gmail.com">Contact us</a>
+          <a className="font-label-md text-label-md text-tertiary underline opacity-80 transition-colors hover:text-primary hover:opacity-100" href="https://github.com/GHReddy456/Faculty_Ranker.git">GitHub</a>
+          <a className="font-label-md text-label-md text-tertiary underline opacity-80 transition-colors hover:text-primary hover:opacity-100" href="mailto:harigaddam2006@gmail.com">Contact us</a>
         </div>
         <p className="font-body-md text-body-md text-on-surface-variant">© 2023 Faculty Ranker. All rights reserved.</p>
       </footer>

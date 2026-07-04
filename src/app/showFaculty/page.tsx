@@ -3,7 +3,7 @@
 import Link from "next/link";
 import FallbackImage from "@/components/FallbackImage";
 
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import {
   getPreviousStateFromLocalStorage,
@@ -13,64 +13,59 @@ import FacultyCard from "@/components/facultyCard";
 import { LoadingCardComponent } from "@/components/loadingCard";
 import { SearchBar } from "./searchbar";
 import { queryFacultyData } from "./query_faculty";
+import { getFacultyDetails, getFacultyRating } from "@/firebase/getFacultyDetails";
 
 const ITEMS_PER_PAGE = 6;
 
-const getStableValue = (seed: string, min: number, max: number, digits = 2) => {
-  let hash = 0;
-  for (let i = 0; i < seed.length; i += 1) {
-    hash = (hash << 5) - hash + seed.charCodeAt(i);
-    hash |= 0;
-  }
+const mergeFacultyWithMetadata = (faculty: FacultyData, fallbackIndex: number): FacultyData => {
+  const metadata = queryFacultyData.find(
+    (item) => item.id === faculty.id || item.name === faculty.name,
+  );
 
-  const normalized = Math.abs(hash) % 1000;
-  const range = max - min;
-  return Number((min + (normalized / 999) * range).toFixed(digits));
+  return {
+    ...faculty,
+    id: faculty.id ?? metadata?.id ?? `${faculty.name ?? "faculty"}-${fallbackIndex}`,
+    name: faculty.name ?? metadata?.name ?? "Faculty",
+    image_url: faculty.image_url ?? metadata?.image_url ?? "/teach.jpg",
+    specialization: faculty.specialization ?? metadata?.specialization ?? "",
+  };
 };
 
-const buildFacultyData = (searchTerm: string): FacultyData[] => {
+const getFilteredFacultyData = (facultyData: FacultyData[], searchTerm: string): FacultyData[] => {
   const normalizedQuery = searchTerm.trim().toLowerCase();
-  const source = queryFacultyData.map((faculty, index) => {
-    const seed = `${faculty.id}-${faculty.name}-${index}`;
-
-    return {
-      id: faculty.id,
-      name: faculty.name,
-      image_url: faculty.image_url,
-      specialization: faculty.specialization,
-      teaching_rating: getStableValue(seed, 3.6, 4.0),
-      attendance_rating: getStableValue(`${seed}-attendance`, 3.4, 4.0),
-      correction_rating: getStableValue(`${seed}-correction`, 3.3, 3.9),
-      num_teaching_ratings: Math.round(getStableValue(`${seed}-teach-count`, 80, 140)),
-      num_attendance_ratings: Math.round(getStableValue(`${seed}-attendance-count`, 70, 130)),
-      num_correction_ratings: Math.round(getStableValue(`${seed}-correction-count`, 70, 120)),
-    };
-  });
 
   if (!normalizedQuery) {
-    return source;
+    return facultyData;
   }
 
-  return source.filter((faculty) => {
-    const searchableText = `${faculty.name} ${faculty.specialization ?? ""}`.toLowerCase();
+  return facultyData.filter((faculty) => {
+    const searchableText = `${faculty.name ?? ""} ${faculty.specialization ?? ""}`.toLowerCase();
     return searchableText.includes(normalizedQuery);
   });
 };
 
-const getFacultyPage = (searchTerm: string, pageIndex: number): FacultyData[] => {
-  const allFaculty = buildFacultyData(searchTerm);
-  const startIndex = pageIndex * ITEMS_PER_PAGE;
-  return allFaculty.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-};
-
 export default function RenderFacultyGrid() {
   const [faculty_details_with_ratings, setFaculty_details_with_ratings] =
-    useState<FacultyData[]>(() => getFacultyPage("", 0));
+    useState<FacultyData[]>([]);
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [pageIndex, setIndex] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
-  const totalPages = Math.max(1, Math.ceil(buildFacultyData(searchTerm).length / ITEMS_PER_PAGE));
+
+  // When searching, totalPages is based on all matching faculty across all partitions.
+  // When not searching, it's based on all faculty split into pages.
+  const filteredMeta = useMemo(() => {
+    const q = searchTerm.trim().toLowerCase();
+    if (!q) return null; // null means "use normal pagination"
+    return queryFacultyData.filter((f) =>
+      `${f.name} ${f.specialization ?? ""}`.toLowerCase().includes(q)
+    );
+  }, [searchTerm]);
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil((filteredMeta ?? queryFacultyData).length / ITEMS_PER_PAGE)
+  );
 
   useEffect(() => {
     const previousState = getPreviousStateFromLocalStorage();
@@ -85,18 +80,81 @@ export default function RenderFacultyGrid() {
       return;
     }
 
-    const nextFaculty = getFacultyPage(searchTerm, safePageIndex).map((faculty, index) => ({
-      ...faculty,
-      id: `${faculty.id}-${safePageIndex}-${index}`,
-    }));
+    let isMounted = true;
+    setLoading(true);
 
-    setFaculty_details_with_ratings(nextFaculty);
-    setLoading(false);
-    savePreviousStateToLocalStorage({ index: safePageIndex });
-  }, [pageIndex, searchTerm, totalPages]);
+    if (filteredMeta !== null) {
+      // SEARCH MODE: fetch ratings for the matching faculty from their real partitions
+      const pageSlice = filteredMeta.slice(
+        safePageIndex * ITEMS_PER_PAGE,
+        (safePageIndex + 1) * ITEMS_PER_PAGE
+      );
+
+      Promise.all(
+        pageSlice.map(async (meta, index) => {
+          const ratingData = await getFacultyRating(meta.id, meta.partition_number);
+          return {
+            id: `${meta.id}-${safePageIndex}-${index}`,
+            name: meta.name,
+            image_url: meta.image_url,
+            specialization: meta.specialization ?? "",
+            teaching_rating: ratingData?.teaching_rating ?? null,
+            attendance_rating: ratingData?.attendance_rating ?? null,
+            correction_rating: ratingData?.correction_rating ?? null,
+            num_teaching_ratings: ratingData?.num_teaching_ratings ?? null,
+            num_attendance_ratings: ratingData?.num_attendance_ratings ?? null,
+            num_correction_ratings: ratingData?.num_correction_ratings ?? null,
+            partition_number: meta.partition_number,
+          } as FacultyData;
+        })
+      )
+        .then((results) => {
+          if (!isMounted) return;
+          setFaculty_details_with_ratings(results);
+        })
+        .catch(() => {
+          if (!isMounted) return;
+          setFaculty_details_with_ratings([]);
+        })
+        .finally(() => {
+          if (isMounted) setLoading(false);
+        });
+    } else {
+      // NORMAL PAGINATION MODE: fetch the whole partition from Firebase
+      getFacultyDetails(safePageIndex)
+        .then((facultyData) => {
+          if (!isMounted) return;
+
+          const mergedFaculty = facultyData
+            .map((faculty, index) => mergeFacultyWithMetadata(faculty, index))
+            .slice(0, ITEMS_PER_PAGE);
+
+          setFaculty_details_with_ratings(
+            mergedFaculty.map((faculty, index) => ({
+              ...faculty,
+              id: `${faculty.id}-${safePageIndex}-${index}`,
+            }))
+          );
+        })
+        .catch(() => {
+          if (!isMounted) return;
+          setFaculty_details_with_ratings([]);
+        })
+        .finally(() => {
+          if (isMounted) {
+            setLoading(false);
+            savePreviousStateToLocalStorage({ index: safePageIndex });
+          }
+        });
+    }
+
+    return () => {
+      isMounted = false;
+    };
+  }, [pageIndex, filteredMeta, totalPages]);
 
   return (
-    <div className="min-h-screen flex flex-col overflow-x-hidden bg-surface-dim text-on-surface selection:bg-primary selection:text-primary-container font-body-md">
+    <div className="min-h-screen flex flex-col overflow-x-hidden bg-surface-dim text-on-surface selection:bg-primary selection:text-primary-container font-body-md" suppressHydrationWarning>
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="blob absolute top-[-10%] left-[-10%] h-[500px] w-[500px] rounded-full bg-primary/20 animate-float" />
         <div className="blob absolute bottom-[-10%] right-[-5%] h-[600px] w-[600px] rounded-full bg-tertiary/20 animate-float" style={{ animationDelay: "-3s" }} />
@@ -148,13 +206,13 @@ export default function RenderFacultyGrid() {
                       pathname: `/faculty/${faculty.id}`,
                       query: {
                         ...faculty,
-                        partition_number: pageIndex,
+                        partition_number: (faculty as FacultyData & { partition_number?: number }).partition_number ?? pageIndex,
                       },
                     }}
                   >
                     <FacultyCard
                       key={faculty.id}
-                      faculty={{ ...faculty, partition_number: pageIndex }}
+                      faculty={{ ...faculty, partition_number: (faculty as FacultyData & { partition_number?: number }).partition_number ?? pageIndex }}
                     />
                   </Link>
                 ))}
@@ -188,8 +246,8 @@ export default function RenderFacultyGrid() {
 
       <footer className="mt-auto flex w-full flex-col items-center gap-6 border-t border-white/5 bg-surface-container-lowest py-12 backdrop-blur-md">
         <div className="flex items-center gap-12">
-          <a className="font-label-md text-label-md text-on-surface-variant underline opacity-80 transition-colors hover:text-primary hover:opacity-100" href="https://github.com/Sarath191181208/faculty-ranker">GitHub</a>
-          <a className="font-label-md text-label-md text-on-surface-variant underline opacity-80 transition-colors hover:text-primary hover:opacity-100" href="https://mail.google.com/mail/?view=cm&to=facultyranker@gmail.com">Contact us</a>
+          <a className="font-label-md text-label-md text-on-surface-variant underline opacity-80 transition-colors hover:text-primary hover:opacity-100" href="https://github.com/GHReddy456/Faculty_Ranker.git">GitHub</a>
+          <a className="font-label-md text-label-md text-on-surface-variant underline opacity-80 transition-colors hover:text-primary hover:opacity-100" href="mailto:harigaddam2006@gmail.com">Contact us</a>
         </div>
         <div className="flex flex-col items-center gap-2">
           <span className="font-headline-md text-headline-md text-on-surface opacity-50">Faculty Ranker</span>
