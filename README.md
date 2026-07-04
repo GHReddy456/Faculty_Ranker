@@ -65,7 +65,3 @@ npm run dev -- --port 3001
 ## Notes
 
 The app uses a combination of local faculty data and Firebase-backed details for the experience. The interface is designed to be easy to extend if you want to add authentication, richer analytics, or more faculty metadata later.
-
-## Demo
-
-![Faculty Ranker preview](./images/screenshots/Screenshot.png)
