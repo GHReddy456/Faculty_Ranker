@@ -51,7 +51,11 @@ export default function FacultyCard(props: {
       <div className="mt-5 flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-3 py-3 text-sm text-slate-300">
         <span>Student reviews</span>
         <span className="font-semibold text-primary">
-          {(faculty.num_teaching_ratings ?? 0) + (faculty.num_attendance_ratings ?? 0) + (faculty.num_correction_ratings ?? 0)}
+          {Math.max(
+            faculty.num_teaching_ratings ?? 0,
+            faculty.num_attendance_ratings ?? 0,
+            faculty.num_correction_ratings ?? 0
+          )}
         </span>
       </div>
     </div>
