@@ -16,20 +16,36 @@ import { queryFacultyData } from "./query_faculty";
 
 const ITEMS_PER_PAGE = 6;
 
+const getStableValue = (seed: string, min: number, max: number, digits = 2) => {
+  let hash = 0;
+  for (let i = 0; i < seed.length; i += 1) {
+    hash = (hash << 5) - hash + seed.charCodeAt(i);
+    hash |= 0;
+  }
+
+  const normalized = Math.abs(hash) % 1000;
+  const range = max - min;
+  return Number((min + (normalized / 999) * range).toFixed(digits));
+};
+
 const buildFacultyData = (searchTerm: string): FacultyData[] => {
   const normalizedQuery = searchTerm.trim().toLowerCase();
-  const source = queryFacultyData.map((faculty, index) => ({
-    id: faculty.id,
-    name: faculty.name,
-    image_url: faculty.image_url,
-    specialization: faculty.specialization,
-    teaching_rating: [3.99, 3.91, 3.86, 3.82, 3.78, 3.74][index % 6],
-    attendance_rating: [3.98, 3.88, 3.79, 3.76, 3.72, 3.69][index % 6],
-    correction_rating: [3.59, 3.74, 3.65, 3.61, 3.58, 3.55][index % 6],
-    num_teaching_ratings: [120, 102, 88, 95, 83, 79][index % 6],
-    num_attendance_ratings: [115, 98, 84, 90, 79, 74][index % 6],
-    num_correction_ratings: [110, 95, 81, 86, 76, 71][index % 6],
-  }));
+  const source = queryFacultyData.map((faculty, index) => {
+    const seed = `${faculty.id}-${faculty.name}-${index}`;
+
+    return {
+      id: faculty.id,
+      name: faculty.name,
+      image_url: faculty.image_url,
+      specialization: faculty.specialization,
+      teaching_rating: getStableValue(seed, 3.6, 4.0),
+      attendance_rating: getStableValue(`${seed}-attendance`, 3.4, 4.0),
+      correction_rating: getStableValue(`${seed}-correction`, 3.3, 3.9),
+      num_teaching_ratings: Math.round(getStableValue(`${seed}-teach-count`, 80, 140)),
+      num_attendance_ratings: Math.round(getStableValue(`${seed}-attendance-count`, 70, 130)),
+      num_correction_ratings: Math.round(getStableValue(`${seed}-correction-count`, 70, 120)),
+    };
+  });
 
   if (!normalizedQuery) {
     return source;
