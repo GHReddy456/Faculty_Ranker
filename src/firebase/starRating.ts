@@ -4,6 +4,7 @@ import {
   runTransaction,
 } from "firebase/firestore";
 import { db } from "@/firebase/firebase";
+import { sanitizeFacultyKey } from "@/firebase/sanitizeFacultyKey";
 
 interface FacultyRatingWithoutId extends Omit<FacultyRating, "id"> {}
 // make all the fields in FacultyRatingCount not optional  using required
@@ -13,26 +14,16 @@ function getFacultyUpdatedRatingDetialCounters(
   updatedFacultyRating: FacultyRatingWithoutId,
   countUsers: FacultyRatingCount
 ) {
-  facultyId += ".";
+  const safeKey = sanitizeFacultyKey(facultyId);
   return {
-    [facultyId + "teaching_rating"]: increment(
-      updatedFacultyRating.teaching_rating!
-    ),
-    [facultyId + "attendance_rating"]: increment(
-      updatedFacultyRating.attendance_rating!
-    ),
-    [facultyId + "correction_rating"]: increment(
-      updatedFacultyRating.correction_rating!
-    ),
-    [facultyId + "num_teaching_ratings"]: increment(
-      countUsers.num_teaching_ratings!
-    ),
-    [facultyId + "num_attendance_ratings"]: increment(
-      countUsers.num_attendance_ratings!
-    ),
-    [facultyId + "num_correction_ratings"]: increment(
-      countUsers.num_correction_ratings!
-    ),
+    [safeKey]: {
+      teaching_rating: increment(updatedFacultyRating.teaching_rating!),
+      attendance_rating: increment(updatedFacultyRating.attendance_rating!),
+      correction_rating: increment(updatedFacultyRating.correction_rating!),
+      num_teaching_ratings: increment(countUsers.num_teaching_ratings!),
+      num_attendance_ratings: increment(countUsers.num_attendance_ratings!),
+      num_correction_ratings: increment(countUsers.num_correction_ratings!),
+    }
   };
 }
 
@@ -109,14 +100,17 @@ export async function writeFacultyRating(
   const ratingsDocRef = doc(db, "ratings", ratingDocId);
 
   await runTransaction(db, async (transaction) => {
-    transaction.update(
+    // Use set+merge so this works even if the faculty doc doesn't exist yet
+    // (i.e., for faculty that have never been rated before)
+    transaction.set(
       facultyDocRef,
       getFacultyUpdatedRatingDetialCounters(
         facultyId,
         updatedFacultyRating,
         countUsers
-      )
+      ),
+      { merge: true }
     );
-    transaction.set(ratingsDocRef, newRating);
+    transaction.set(ratingsDocRef, newRating, { merge: true });
   });
 }

@@ -8,6 +8,7 @@ import { useAuth } from "@/context/AuthContext";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/firebase/firebase";
 import { writeFacultyRating } from "@/firebase/starRating";
+import { sanitizeFacultyKey } from "@/firebase/sanitizeFacultyKey";
 import facultyDetailsData from "@/data/faculty_details.json";
 import Image from "next/image";
 
@@ -81,7 +82,9 @@ export default function SingleFacultyPage() {
   // The raw facultyId from the URL may be suffixed like "FIREBASE_KEY-pageIndex-listIndex"
   // Strip the suffix to get the original Firebase document field key
   const rawId = String(facultyId);
-  const firebaseKey = matchedFaculty?.id ?? rawId.split(/-\d+-\d+$/)[0];
+  const firebaseKey = sanitizeFacultyKey(
+    matchedFaculty?.id ?? rawId.split(/-\d+-\d+$/)[0]
+  );
 
   const details = (facultyDetailsData as Record<string, any>)[firebaseKey] || null;
 

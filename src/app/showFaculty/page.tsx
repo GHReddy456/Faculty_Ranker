@@ -15,6 +15,7 @@ import { LoadingCardComponent } from "@/components/loadingCard";
 import { SearchBar } from "./searchbar";
 import { queryFacultyData, FACULTY_DATA_VERSION } from "./query_faculty";
 import { getFacultyRating } from "@/firebase/getFacultyDetails";
+import { sanitizeFacultyKey } from "@/firebase/sanitizeFacultyKey";
 
 const ITEMS_PER_PAGE = 6;
 
@@ -63,7 +64,8 @@ export default function RenderFacultyGrid() {
 
     Promise.all(
       pageSlice.map(async (meta, index) => {
-        const ratingData = await getFacultyRating(meta.id, meta.partition_number);
+        const safeId = sanitizeFacultyKey(meta.id);
+        const ratingData = await getFacultyRating(safeId, meta.partition_number);
         return {
           id: `${meta.id}-${safePageIndex}-${index}`,
           name: meta.name,
