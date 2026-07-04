@@ -21,17 +21,19 @@ export default function SingleFacultyPage() {
   const [activeTab, setActiveTab] = useState("Education");
 
   const facultyId = params?.id ?? searchParams.get("id") ?? "unknown";
-  const facultyName = searchParams.get("name") ?? "Dr. Aastha Madonna Sathe";
+  const nameFromParams = searchParams.get("name") ?? "";
 
   // Try to find the faculty in queryFacultyData to get partition_number and fallback info
   const matchedFaculty = queryFacultyData.find(
-    (faculty) => faculty.id === facultyId || faculty.name === facultyName
+    (faculty) => faculty.id === facultyId || (nameFromParams && faculty.name === nameFromParams)
   );
+
+  const facultyName = nameFromParams || matchedFaculty?.name || "";
 
   const facultySpecialization =
     searchParams.get("specialization") ??
     matchedFaculty?.specialization ??
-    "Computational Statistics, Stable Distributions, Time Series Analysis, Forecasting, Artificial Neural Networks";
+    "";
   const facultyImage = searchParams.get("image_url") ?? matchedFaculty?.image_url ?? "/teach.jpg";
 
   // Ratings from query params (set when navigating from the main grid, which passes real Firebase data)
