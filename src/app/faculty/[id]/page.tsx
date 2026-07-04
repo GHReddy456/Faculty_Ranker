@@ -265,7 +265,7 @@ export default function SingleFacultyPage() {
                     </div>
                     <div className="flex gap-2">
                       {[1, 2, 3, 4, 5].map((value) => {
-                        const activeValue = hovered[section.key] ?? selected[section.key] ?? 0;
+                        const activeValue = hovered[section.key] || selected[section.key] || 0;
                         const isActive = value <= activeValue;
                         return (
                           <span
