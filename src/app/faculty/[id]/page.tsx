@@ -106,21 +106,25 @@ export default function SingleFacultyPage() {
   useEffect(() => {
     if (!user || !firebaseKey) return;
     const fetchUserRating = async () => {
-      const docRef = doc(db, "ratings", ratingDocId);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        const data = docSnap.data();
-        const r = {
-          attendance_rating: data.attendance_rating ?? null,
-          correction_rating: data.correction_rating ?? null,
-          teaching_rating: data.teaching_rating ?? null,
-        };
-        setOriginalUserRating(r);
-        setSelected({
-          attendance: r.attendance_rating ?? 0,
-          correction: r.correction_rating ?? 0,
-          teaching: r.teaching_rating ?? 0,
-        });
+      try {
+        const docRef = doc(db, "ratings", ratingDocId);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          const r = {
+            attendance_rating: data.attendance_rating ?? null,
+            correction_rating: data.correction_rating ?? null,
+            teaching_rating: data.teaching_rating ?? null,
+          };
+          setOriginalUserRating(r);
+          setSelected({
+            attendance: r.attendance_rating ?? 0,
+            correction: r.correction_rating ?? 0,
+            teaching: r.teaching_rating ?? 0,
+          });
+        }
+      } catch (error) {
+        console.error("Failed to fetch previous rating (might be a Firestore permissions issue):", error);
       }
     };
     fetchUserRating();
