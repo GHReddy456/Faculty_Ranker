@@ -25,8 +25,14 @@ export default function SingleFacultyPage() {
   const nameFromParams = searchParams.get("name") ?? "";
 
   // Try to find the faculty in queryFacultyData to get partition_number and fallback info
+  // facultyId from the URL may be a composite like "Dr_Kailash_Chandra_Mishra-0-3" (sanitized name)
+  // or a real Firestore ID like "8ysKflP8crtmGJXxHcIy-0-3". Strip the page suffix first.
+  const baseId = String(facultyId).split(/-\d+-\d+$/)[0]; // e.g. "Dr_Kailash_Chandra_Mishra" or "8ysKfl..."
   const matchedFaculty = queryFacultyData.find(
-    (faculty) => faculty.id === facultyId || (nameFromParams && faculty.name === nameFromParams)
+    (faculty) =>
+      faculty.id === baseId ||
+      sanitizeFacultyKey(faculty.id) === baseId ||
+      (nameFromParams && faculty.name === nameFromParams)
   );
 
   const facultyName = nameFromParams || matchedFaculty?.name || "";
@@ -79,12 +85,8 @@ export default function SingleFacultyPage() {
       ? Number(partitionFromParam)
       : (matchedFaculty?.partition_number ?? 0);
 
-  // The raw facultyId from the URL may be suffixed like "FIREBASE_KEY-pageIndex-listIndex"
-  // Strip the suffix to get the original Firebase document field key
-  const rawId = String(facultyId);
-  const firebaseKey = sanitizeFacultyKey(
-    matchedFaculty?.id ?? rawId.split(/-\d+-\d+$/)[0]
-  );
+  // The firebaseKey is the sanitized base ID used as the Firestore map key
+  const firebaseKey = sanitizeFacultyKey(matchedFaculty?.id ?? baseId);
 
   const details = (facultyDetailsData as Record<string, any>)[firebaseKey] || null;
 

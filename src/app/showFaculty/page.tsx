@@ -67,7 +67,7 @@ export default function RenderFacultyGrid() {
         const safeId = sanitizeFacultyKey(meta.id);
         const ratingData = await getFacultyRating(safeId, meta.partition_number);
         return {
-          id: `${meta.id}-${safePageIndex}-${index}`,
+          id: `${safeId}-${safePageIndex}-${index}`,
           name: meta.name,
           image_url: meta.image_url ?? "/teach.jpg",
           specialization: meta.specialization ?? "",
