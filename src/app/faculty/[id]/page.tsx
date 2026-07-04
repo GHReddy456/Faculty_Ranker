@@ -270,7 +270,7 @@ export default function SingleFacultyPage() {
                         return (
                           <span
                             key={`${section.key}-${value}`}
-                            className={`material-symbols-outlined rating-star text-3xl cursor-pointer ${isActive ? "text-primary drop-shadow-[0_0_8px_rgba(var(--color-primary),0.5)]" : "text-white/20"} transition-all duration-200 hover:scale-110`}
+                            className={`material-symbols-outlined rating-star text-3xl cursor-pointer transition-all duration-200 hover:scale-110 ${isActive ? "active text-primary" : "text-white/20"}`}
                             onMouseEnter={() => setHovered((prev) => ({ ...prev, [section.key]: value }))}
                             onMouseLeave={() => setHovered((prev) => ({ ...prev, [section.key]: 0 }))}
                             onClick={() => setSelected((prev) => ({ ...prev, [section.key]: value }))}
