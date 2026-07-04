@@ -8,6 +8,8 @@ import { useAuth } from "@/context/AuthContext";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/firebase/firebase";
 import { writeFacultyRating } from "@/firebase/starRating";
+import facultyDetailsData from "@/data/faculty_details.json";
+import Image from "next/image";
 
 export default function SingleFacultyPage() {
   const params = useParams();
@@ -16,6 +18,7 @@ export default function SingleFacultyPage() {
 
   const [hovered, setHovered] = useState<Record<string, number>>({});
   const [selected, setSelected] = useState<Record<string, number>>({});
+  const [activeTab, setActiveTab] = useState("Education");
 
   const facultyId = params?.id ?? searchParams.get("id") ?? "unknown";
   const facultyName = searchParams.get("name") ?? "Dr. Aastha Madonna Sathe";
@@ -77,6 +80,8 @@ export default function SingleFacultyPage() {
   // Strip the suffix to get the original Firebase document field key
   const rawId = String(facultyId);
   const firebaseKey = matchedFaculty?.id ?? rawId.split(/-\d+-\d+$/)[0];
+
+  const details = (facultyDetailsData as Record<string, any>)[firebaseKey] || null;
 
   useEffect(() => {
     if (hasRatingsInParams) return; // already have real ratings from query params
@@ -202,9 +207,9 @@ export default function SingleFacultyPage() {
         </nav>
         <div className="hidden md:block">
           {!user ? (
-            <button onClick={signInWithGoogle} className="rounded-full border border-primary/30 px-6 py-2 font-label-md text-label-md text-primary transition-all duration-300 hover:bg-white/5 active:scale-95">Sign In</button>
+            <button onClick={signInWithGoogle} className="rounded-lg border border-primary/30 bg-primary px-6 py-2 font-label-md text-label-md text-on-primary-fixed transition-all duration-300 active:scale-95 hover:bg-primary/90">Sign In</button>
           ) : (
-            <button onClick={signOutWithGoogle} className="rounded-full border border-error/30 px-6 py-2 font-label-md text-label-md text-error transition-all duration-300 hover:bg-error/10 active:scale-95">Sign Out</button>
+            <button onClick={signOutWithGoogle} className="rounded-lg border border-error/30 bg-error/10 px-6 py-2 font-label-md text-label-md text-error transition-all duration-300 active:scale-95 hover:bg-error/20">Sign Out</button>
           )}
         </div>
       </header>
@@ -214,15 +219,38 @@ export default function SingleFacultyPage() {
           <div className="glass-card relative flex flex-col items-start gap-8 overflow-hidden rounded-3xl p-6 md:flex-row md:p-8">
             <div className="pointer-events-none absolute inset-0 shimmer" />
             <div className="relative z-10 aspect-[3/4] w-full overflow-hidden rounded-2xl border border-white/10 md:w-64">
-              <img className="h-full w-full object-cover" src={facultyImage} alt={facultyName} />
+              <Image className="h-full w-full object-cover" src={facultyImage} alt={facultyName} fill sizes="(max-width: 768px) 100vw, 256px" />
             </div>
             <div className="relative z-10 flex-1">
               <div className="mb-6 flex flex-col gap-2">
                 <h1 className="font-headline-lg text-headline-lg text-on-surface">{facultyName}</h1>
-                <p className="max-w-2xl leading-relaxed text-on-surface-variant">
+                {details?.designation && (
+                  <p className="text-primary font-bold text-lg">{details.designation}</p>
+                )}
+                {details?.department && (
+                  <p className="text-on-surface-variant font-medium text-base mb-2">{details.department}</p>
+                )}
+                <p className="max-w-2xl leading-relaxed text-on-surface-variant mt-2">
                   <span className="mr-2 font-bold text-primary">Specialization Areas:</span>
                   {facultySpecialization}
                 </p>
+                
+                {details && (
+                  <div className="flex flex-col gap-2 mt-4 text-sm text-on-surface-variant">
+                    {details.email && (
+                      <div className="flex items-center gap-2">
+                        <span className="material-symbols-outlined text-base">mail</span>
+                        <a href={`mailto:${details.email}`} className="hover:text-primary transition-colors">{details.email}</a>
+                      </div>
+                    )}
+                    {details.office_address && (
+                      <div className="flex items-center gap-2">
+                        <span className="material-symbols-outlined text-base">location_on</span>
+                        <span>{details.office_address}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 {[
@@ -245,6 +273,172 @@ export default function SingleFacultyPage() {
             </div>
           </div>
         </section>
+
+        {details && (
+          <section className="mb-12">
+            <div className="glass-card rounded-3xl p-6 md:p-8">
+              {/* Tab Header */}
+              <div className="flex overflow-x-auto border-b border-primary/20 pb-2 mb-8 hide-scrollbar gap-2">
+                {["Education", "Research", "Projects", "Patents", "Awards"].map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setActiveTab(tab)}
+                    className={`px-8 py-4 font-headline-md text-sm sm:text-base font-bold whitespace-nowrap transition-all duration-300 ${
+                      activeTab === tab
+                        ? "bg-[#6a0012] text-white" 
+                        : "bg-[#fcebee] text-[#6a0012] hover:bg-[#fad3db]"
+                    }`}
+                  >
+                    {tab}
+                  </button>
+                ))}
+              </div>
+
+              {/* Tab Content */}
+              <div className="min-h-[200px]">
+                {activeTab === "Education" && (
+                  <div className="animate-fade-in space-y-6 text-on-surface">
+                    <h3 className="text-2xl font-bold text-[#6a0012] mb-6">Education</h3>
+                    {details.education?.phd && (
+                      <div>
+                        <h4 className="flex items-center gap-2 text-lg font-bold">
+                          <span className="h-1.5 w-1.5 rounded-full bg-[#6a0012]"></span> Doctoral Degree
+                        </h4>
+                        <p className="ml-4 mt-1 text-on-surface-variant">{details.education.phd}</p>
+                      </div>
+                    )}
+                    {details.education?.pg && (
+                      <div>
+                        <h4 className="flex items-center gap-2 text-lg font-bold">
+                          <span className="h-1.5 w-1.5 rounded-full bg-[#6a0012]"></span> Master Degree
+                        </h4>
+                        <p className="ml-4 mt-1 text-on-surface-variant">{details.education.pg}</p>
+                      </div>
+                    )}
+                    {details.education?.ug && (
+                      <div>
+                        <h4 className="flex items-center gap-2 text-lg font-bold">
+                          <span className="h-1.5 w-1.5 rounded-full bg-[#6a0012]"></span> Under Graduation
+                        </h4>
+                        <p className="ml-4 mt-1 text-on-surface-variant">{details.education.ug}</p>
+                      </div>
+                    )}
+                    {!details.education?.phd && !details.education?.pg && !details.education?.ug && (
+                      <p className="text-on-surface-variant italic">No education details available.</p>
+                    )}
+                  </div>
+                )}
+
+                {activeTab === "Research" && (
+                  <div className="animate-fade-in space-y-6 text-on-surface">
+                    <h3 className="text-2xl font-bold text-[#6a0012] mb-6">Research</h3>
+                    
+                    {details.research?.area && (
+                      <div>
+                        <h4 className="flex items-center gap-2 text-lg font-bold">
+                          <span className="h-1.5 w-1.5 rounded-full bg-[#6a0012]"></span> Area of Specialisation
+                        </h4>
+                        <p className="ml-4 mt-1 text-on-surface-variant">{details.research.area}</p>
+                      </div>
+                    )}
+
+                    <div className="space-y-3 mt-8">
+                      {details.research?.orcid && (
+                        <div className="flex items-center gap-2">
+                          <span className="h-1.5 w-1.5 rounded-full bg-[#6a0012]"></span>
+                          <span className="font-medium">ORCID - </span>
+                          <a href={details.research.orcid.startsWith('http') ? details.research.orcid : `https://orcid.org/${details.research.orcid}`} target="_blank" rel="noreferrer" className="text-[#6a0012] hover:underline">Link</a>
+                        </div>
+                      )}
+                      {details.research?.scopus && (
+                        <div className="flex items-center gap-2">
+                          <span className="h-1.5 w-1.5 rounded-full bg-[#6a0012]"></span>
+                          <span className="font-medium">SCOPUS - </span>
+                          <a href={details.research.scopus.startsWith('http') ? details.research.scopus : `https://www.scopus.com/authid/detail.uri?authorId=${details.research.scopus}`} target="_blank" rel="noreferrer" className="text-[#6a0012] hover:underline">Link</a>
+                        </div>
+                      )}
+                      {details.research?.google_scholar && (
+                        <div className="flex items-center gap-2">
+                          <span className="h-1.5 w-1.5 rounded-full bg-[#6a0012]"></span>
+                          <span className="font-medium">GOOGLE SCHOLAR - </span>
+                          <a href={details.research.google_scholar} target="_blank" rel="noreferrer" className="text-[#6a0012] hover:underline">Link</a>
+                        </div>
+                      )}
+                      {details.research?.vidwan && (
+                        <div className="flex items-center gap-2">
+                          <span className="h-1.5 w-1.5 rounded-full bg-[#6a0012]"></span>
+                          <span className="font-medium">Vidwan - </span>
+                          <a href={details.research.vidwan} target="_blank" rel="noreferrer" className="text-[#6a0012] hover:underline">Link</a>
+                        </div>
+                      )}
+                      {details.linkedin && (
+                        <div className="flex items-center gap-2">
+                          <span className="h-1.5 w-1.5 rounded-full bg-[#6a0012]"></span>
+                          <span className="font-medium">LinkedIn - </span>
+                          <a href={details.linkedin} target="_blank" rel="noreferrer" className="text-[#6a0012] hover:underline">Link</a>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === "Projects" && (
+                  <div className="animate-fade-in text-on-surface">
+                    <h3 className="text-2xl font-bold text-[#6a0012] mb-6">Projects</h3>
+                    {details.projects && details.projects.length > 0 ? (
+                      <div className="space-y-4 text-on-surface-variant">
+                        {details.projects.map((proj: any, idx: number) => (
+                          <div key={idx} className="flex items-start gap-2">
+                            <span className="h-1.5 w-1.5 rounded-full bg-[#6a0012] mt-2 flex-shrink-0"></span>
+                            <span>{proj.project}</span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-on-surface-variant italic">No projects available.</p>
+                    )}
+                  </div>
+                )}
+
+                {activeTab === "Patents" && (
+                  <div className="animate-fade-in text-on-surface">
+                    <h3 className="text-2xl font-bold text-[#6a0012] mb-6">Patents</h3>
+                    {details.patents && details.patents.length > 0 ? (
+                      <div className="space-y-4 text-on-surface-variant">
+                        {details.patents.map((pat: any, idx: number) => (
+                          <div key={idx} className="flex items-start gap-2">
+                            <span className="h-1.5 w-1.5 rounded-full bg-[#6a0012] mt-2 flex-shrink-0"></span>
+                            <span>{pat.patent}</span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-on-surface-variant italic">No patents available.</p>
+                    )}
+                  </div>
+                )}
+
+                {activeTab === "Awards" && (
+                  <div className="animate-fade-in text-on-surface">
+                    <h3 className="text-2xl font-bold text-[#6a0012] mb-6">Awards</h3>
+                    {details.awards && details.awards.length > 0 ? (
+                      <div className="space-y-4 text-on-surface-variant">
+                        {details.awards.map((award: any, idx: number) => (
+                          <div key={idx} className="flex items-start gap-2">
+                            <span className="h-1.5 w-1.5 rounded-full bg-[#6a0012] mt-2 flex-shrink-0"></span>
+                            <span>{award.award_or_recognition_name}</span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-on-surface-variant italic">No awards available.</p>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          </section>
+        )}
 
         <section>
           <div className="glass-card rounded-3xl p-6 md:p-8">
@@ -298,7 +492,7 @@ export default function SingleFacultyPage() {
           <a className="font-label-md text-label-md text-tertiary underline opacity-80 transition-colors hover:text-primary hover:opacity-100" href="https://github.com/GHReddy456/Faculty_Ranker.git">GitHub</a>
           <a className="font-label-md text-label-md text-tertiary underline opacity-80 transition-colors hover:text-primary hover:opacity-100" href="https://mail.google.com/mail/?view=cm&to=harigaddam2006@gmail.com" target="_blank" rel="noopener noreferrer">Contact us</a>
         </div>
-        <p className="font-body-md text-body-md text-on-surface-variant">© 2023 Faculty Ranker. All rights reserved.</p>
+        <p className="font-body-md text-body-md text-on-surface-variant">© 2026 Faculty Ranker. All rights reserved.</p>
       </footer>
     </div>
   );

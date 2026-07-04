@@ -1,10 +1,11 @@
 "use client";
 
 import { useAuth } from "@/context/AuthContext";
+import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
-  const { user, signInWithGoogle } = useAuth();
+  const { user, signInWithGoogle, signOutWithGoogle } = useAuth();
 
   return (
     <div className="min-h-screen flex flex-col overflow-x-hidden bg-surface-dim text-on-surface selection:bg-primary selection:text-primary-container font-body-md">
@@ -28,7 +29,9 @@ export default function Home() {
               Sign In
             </button>
           ) : (
-            <span className="font-label-md text-label-md text-on-surface-variant">Signed in</span>
+            <button onClick={signOutWithGoogle} className="rounded-lg border border-error/30 bg-error/10 px-6 py-2 font-label-md text-label-md text-error transition-all duration-300 active:scale-95 hover:bg-error/20">
+              Sign Out
+            </button>
           )}
         </div>
       </header>
@@ -60,7 +63,7 @@ export default function Home() {
             <div className="absolute right-[10%] top-[10%] h-4/5 w-4/5 rounded-3xl bg-secondary/10 blur-2xl" />
             <div className="glass-card absolute right-0 top-0 z-20 h-[90%] w-full rotate-3 overflow-hidden rounded-3xl p-4 transition-transform duration-700 hover:rotate-0">
               <div className="inner-glow relative h-full w-full overflow-hidden rounded-2xl">
-                <img className="h-full w-full object-cover" src="/stitch_glassmorphic_ui_redesign/shutterstock_2183363749-scaled.jpg" alt="Faculty illustration" />
+                <Image className="h-full w-full object-cover" src="/stitch_glassmorphic_ui_redesign/shutterstock_2183363749-scaled.jpg" alt="Faculty illustration" fill sizes="(max-width: 768px) 100vw, 50vw" />
                 <div className="absolute bottom-6 left-6 right-6 flex flex-col gap-2 rounded-xl border border-white/20 bg-white/5 p-4 backdrop-blur-xl">
                   <div className="flex items-center justify-between">
                     <span className="font-label-md text-label-md text-primary">Top Rated Educator</span>
@@ -119,7 +122,7 @@ export default function Home() {
         </div>
         <div className="flex flex-col items-center gap-2">
           <span className="font-headline-md text-headline-md text-on-surface opacity-50">Faculty Ranker</span>
-          <p className="font-body-md text-body-md text-on-surface-variant/60">© 2023 Faculty Ranker. All rights reserved.</p>
+          <p className="font-body-md text-body-md text-on-surface-variant/60">© 2026 Faculty Ranker. All rights reserved.</p>
         </div>
       </footer>
     </div>

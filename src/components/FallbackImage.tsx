@@ -29,6 +29,7 @@ const FallbackImage = (props: FallbackImageProps) => {
       : DEFAULT_FACULTY_IMAGE;
 
   return (
+    // eslint-disable-next-line @next/next/no-img-element
     <img
       alt={alt ?? ""}
       className={className}
