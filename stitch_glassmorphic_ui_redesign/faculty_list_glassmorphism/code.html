@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Faculty Ranker | Academic Excellence</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@500&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@100..900&family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-dim": "#111412",
+                        "on-secondary-fixed-variant": "#3c475d",
+                        "tertiary-container": "#001b33",
+                        "secondary-fixed-dim": "#bbc6e2",
+                        "on-primary-container": "#768497",
+                        "on-secondary": "#263046",
+                        "primary": "#bac8dc",
+                        "on-tertiary-fixed-variant": "#2f4865",
+                        "primary-fixed-dim": "#bac8dc",
+                        "error-container": "#93000a",
+                        "on-primary-fixed": "#0f1c2c",
+                        "background": "#111412",
+                        "surface-bright": "#373a37",
+                        "on-background": "#e2e3df",
+                        "inverse-on-surface": "#2f312e",
+                        "on-error": "#690005",
+                        "surface-variant": "#333533",
+                        "tertiary-fixed-dim": "#afc9ea",
+                        "primary-container": "#0d1b2a",
+                        "on-secondary-fixed": "#101b30",
+                        "error": "#ffb4ab",
+                        "surface-container-low": "#1a1c1a",
+                        "on-surface": "#e2e3df",
+                        "outline": "#8e9196",
+                        "surface-tint": "#bac8dc",
+                        "surface-container-lowest": "#0c0f0d",
+                        "on-tertiary-container": "#6b85a4",
+                        "tertiary-fixed": "#d1e4ff",
+                        "on-primary-fixed-variant": "#3a4859",
+                        "surface": "#111412",
+                        "primary-fixed": "#d6e4f9",
+                        "outline-variant": "#44474c",
+                        "surface-container-high": "#282b28",
+                        "inverse-surface": "#e2e3df",
+                        "secondary-container": "#3e4960",
+                        "on-error-container": "#ffdad6",
+                        "on-surface-variant": "#c4c6cc",
+                        "secondary-fixed": "#d7e2ff",
+                        "on-tertiary": "#17324d",
+                        "surface-container-highest": "#333533",
+                        "surface-container": "#1e201e",
+                        "inverse-primary": "#525f71",
+                        "on-primary": "#243141",
+                        "secondary": "#bbc6e2",
+                        "on-tertiary-fixed": "#001d36",
+                        "tertiary": "#afc9ea",
+                        "on-secondary-container": "#adb8d3"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-max": "1280px",
+                        "gutter": "24px",
+                        "margin-mobile": "16px",
+                        "unit": "8px",
+                        "margin-desktop": "40px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "label-md": ["JetBrains Mono"],
+                        "display-lg": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "body-md": ["Inter"],
+                        "rating-number": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "label-md": ["14px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "rating-number": ["28px", {"lineHeight": "1", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+        .dark .glass-card {
+            background: rgba(17, 20, 18, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .inner-glow {
+            box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        .mesh-gradient {
+            background: radial-gradient(at 0% 0%, rgba(186, 200, 220, 0.15) 0px, transparent 50%),
+                        radial-gradient(at 100% 100%, rgba(175, 201, 234, 0.1) 0px, transparent 50%);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-surface-dim text-on-surface font-body-md text-body-md transition-colors duration-500 overflow-x-hidden">
+<div class="fixed inset-0 pointer-events-none z-[-1] mesh-gradient"></div>
+<div class="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-primary/10 blur-[120px]"></div>
+<div class="absolute bottom-[-10%] left-[-10%] w-[30%] h-[30%] rounded-full bg-tertiary/10 blur-[100px]"></div>
+<nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 bg-surface-dim/80 dark:bg-surface-dim/80 backdrop-blur-xl border-b border-white/10 shadow-lg shadow-surface-dim/20">
+<div class="font-headline-md text-headline-md font-bold text-on-surface dark:text-on-surface">Faculty Ranker</div>
+<div class="hidden md:flex gap-8 items-center">
+<a class="font-label-md text-label-md text-primary border-b-2 border-primary pb-1" href="#">All Faculty</a>
+<button class="p-2 rounded-full hover:bg-white/5 transition-all duration-300 active:scale-90" id="theme-toggle">
+<span class="material-symbols-outlined" data-icon="dark_mode">dark_mode</span>
+</button>
+<button class="font-label-md text-label-md text-primary bg-primary-container px-6 py-2 rounded-xl hover:bg-white/5 transition-all duration-300 scale-95 active:scale-90">Sign In</button>
+</div>
+<div class="md:hidden flex items-center gap-4">
+<button class="p-2" id="theme-toggle-mobile">
+<span class="material-symbols-outlined" data-icon="contrast">contrast</span>
+</button>
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</div>
+</nav>
+<main class="pt-32 pb-24 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+<header class="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-16">
+<div class="max-w-2xl space-y-4">
+<h1 class="font-display-lg text-display-lg tracking-tight">All Faculty</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
+                    Explore the comprehensive performance metrics for VIT-AP University faculty members. Our transparent rating system provides peer-reviewed insights into attendance, evaluation fairness, and instructional quality.
+                </p>
+</div>
+<div class="relative group w-full lg:w-96">
+<div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline" data-icon="search">search</span>
+</div>
+<input class="w-full h-14 pl-12 pr-6 glass-card rounded-2xl border-none ring-1 ring-white/10 focus:ring-primary/50 transition-all duration-300 placeholder:text-outline-variant font-body-md text-body-md outline-none" placeholder="Search Faculty..." type="text"/>
+</div>
+</header>
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
+<article class="glass-card rounded-[2rem] p-6 flex flex-col gap-6 hover:scale-[1.02] transition-transform duration-500 group inner-glow">
+<div class="flex gap-4">
+<div class="relative flex-shrink-0">
+<div class="w-24 h-24 rounded-2xl overflow-hidden border border-white/10">
+<img class="w-full h-full object-cover" data-alt="A professional studio portrait of a female academic researcher with long dark hair, wearing traditional yellow attire, set against a clean white and subtly blurred background. The lighting is soft and even, emphasizing a sophisticated academic persona with a slight smile and intelligent gaze, perfectly suited for a high-end educational platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuClTla6I2AQMMxWLf684Dmp0a4zlFjG-dzsYkTduQ-PL_0QBQtFMpMx_RwIcNA8Ek3dYwHxcOPoPQffG146z1i6Rav5jV_QCnUTnEL0T_b_MD-yCaHoKNSSfdf61GbfXGXGYgFedehq7vivCbcQtA3XTzLnmiU5Pkx5zjL9K0mRMlu5AgS8LUsaVqeJz-lgHvYgEtd1Wunh4QhE2FYzXDBqlvhUP33_StPNGcIhchnVv4IRn6ql62VTmg"/>
+</div>
+</div>
+<div class="flex flex-col justify-center">
+<h3 class="font-headline-md text-headline-md text-on-surface leading-tight">Dr. Aastha Madonna Sathe</h3>
+<p class="font-label-md text-label-md text-on-primary-container/80 mt-1">Specialization: Computational Statistics</p>
+</div>
+</div>
+<div class="space-y-4 flex-grow">
+<div class="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5">
+<span class="font-label-md text-label-md">Attendance</span>
+<div class="flex items-center gap-3">
+<span class="font-rating-number text-rating-number text-primary">3.98 <span class="text-xs text-on-surface-variant font-normal">/ 5</span></span>
+<div class="flex items-center gap-1 text-on-surface-variant text-sm">
+<span class="material-symbols-outlined text-xs" data-icon="group">group</span>
+                                96
+                            </div>
+</div>
+</div>
+<div class="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5">
+<span class="font-label-md text-label-md">Correction</span>
+<div class="flex items-center gap-3">
+<span class="font-rating-number text-rating-number text-primary">3.59 <span class="text-xs text-on-surface-variant font-normal">/ 5</span></span>
+<div class="flex items-center gap-1 text-on-surface-variant text-sm">
+<span class="material-symbols-outlined text-xs" data-icon="group">group</span>
+                                97
+                            </div>
+</div>
+</div>
+<div class="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5">
+<span class="font-label-md text-label-md">Teaching</span>
+<div class="flex items-center gap-3">
+<span class="font-rating-number text-rating-number text-primary">3.99 <span class="text-xs text-on-surface-variant font-normal">/ 5</span></span>
+<div class="flex items-center gap-1 text-on-surface-variant text-sm">
+<span class="material-symbols-outlined text-xs" data-icon="group">group</span>
+                                96
+                            </div>
+</div>
+</div>
+</div>
+<button class="w-full py-3 rounded-xl bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-fixed transition-colors">View Full Profile</button>
+</article>
+<article class="glass-card rounded-[2rem] p-6 flex flex-col gap-6 hover:scale-[1.02] transition-transform duration-500 group inner-glow">
+<div class="flex gap-4">
+<div class="relative flex-shrink-0">
+<div class="w-24 h-24 rounded-2xl overflow-hidden border border-white/10">
+<img class="w-full h-full object-cover" data-alt="A focused headshot of a male professor with short dark hair and a neat beard, wearing a formal light blue shirt and glasses. The lighting is bright and professional, set against a vibrant blue studio backdrop that provides high contrast and clarity. The overall aesthetic is professional, modern, and trustworthy, suitable for a university faculty directory." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCH3Q_WdbRTuk1oKGEQ2V5gi4IJT6JU9QZF60bQ3L9-_T4sOK7WFqvWhEtsCibZzv6Kb_cRTp6m8hZo_sIWmjXXDYMb5r8Hm2ziK9rQJF0Y4w3dBn1libHpkSHZHLbo_gLzRhHCoWxu-Eff_2hVvtvkwbrzL_3Sco5gNM5T5WHQ4ahjWXE1h79qGt2d2o70E8Djb916n9QnUggJP6lD2eigopXd63SLgHcFFown1-825VXr76XyPTSbbg"/>
+</div>
+</div>
+<div class="flex flex-col justify-center">
+<h3 class="font-headline-md text-headline-md text-on-surface leading-tight">Dr. Abdul Kayom Md Khairuzzaman</h3>
+<p class="font-label-md text-label-md text-on-primary-container/80 mt-1">Specialization: Image Processing</p>
+</div>
+</div>
+<div class="space-y-4 flex-grow">
+<div class="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5">
+<span class="font-label-md text-label-md">Attendance</span>
+<div class="flex items-center gap-3">
+<span class="font-rating-number text-rating-number text-secondary">4.29 <span class="text-xs text-on-surface-variant font-normal">/ 5</span></span>
+<div class="flex items-center gap-1 text-on-surface-variant text-sm">
+<span class="material-symbols-outlined text-xs" data-icon="group">group</span>
+                                129
+                            </div>
+</div>
+</div>
+<div class="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5">
+<span class="font-label-md text-label-md">Correction</span>
+<div class="flex items-center gap-3">
+<span class="font-rating-number text-rating-number text-secondary">4.17 <span class="text-xs text-on-surface-variant font-normal">/ 5</span></span>
+<div class="flex items-center gap-1 text-on-surface-variant text-sm">
+<span class="material-symbols-outlined text-xs" data-icon="group">group</span>
+                                127
+                            </div>
+</div>
+</div>
+<div class="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5">
+<span class="font-label-md text-label-md">Teaching</span>
+<div class="flex items-center gap-3">
+<span class="font-rating-number text-rating-number text-secondary">4.05 <span class="text-xs text-on-surface-variant font-normal">/ 5</span></span>
+<div class="flex items-center gap-1 text-on-surface-variant text-sm">
+<span class="material-symbols-outlined text-xs" data-icon="group">group</span>
+                                128
+                            </div>
+</div>
+</div>
+</div>
+<button class="w-full py-3 rounded-xl bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-fixed transition-colors">View Full Profile</button>
+</article>
+<article class="glass-card rounded-[2rem] p-6 flex flex-col gap-6 hover:scale-[1.02] transition-transform duration-500 group inner-glow">
+<div class="flex gap-4">
+<div class="relative flex-shrink-0">
+<div class="w-24 h-24 rounded-2xl overflow-hidden border border-white/10">
+<img class="w-full h-full object-cover" data-alt="A portrait of a male educator wearing a checked formal shirt, looking directly at the camera with a calm expression. The background is a soft, out-of-focus academic setting, and the lighting is warm and inviting. The image conveys approachable authority and is framed for a professional faculty ranking interface, maintaining consistent depth of field and lighting with the overall dark mode UI." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYCar12sWCz-IlZ8qnAGjx1qrj5ASDyXilsr4kgrA8413W3VhiKZ2emYUVBZw0dSd5NONOWC5p1lLu3byUBjtdsudp5lodGLP4-IeRnwUVet5ogqopg3GuQrqxGk70wZ-1O-GxMyOzwHqn6M5tannWNk_rNUpit4AA_tttRR4HaIm8rX9ue-OlZ3A11ffAtYPYRThNmpdyjfB-RlRmmV-pb94I_uufPQTuB9wLtFauAKhOP2JwWIdM4Q"/>
+</div>
+</div>
+<div class="flex flex-col justify-center">
+<h3 class="font-headline-md text-headline-md text-on-surface leading-tight">Dr. Abhishekh</h3>
+<p class="font-label-md text-label-md text-on-primary-container/80 mt-1">Specialization: Fuzzy Optimization</p>
+</div>
+</div>
+<div class="space-y-4 flex-grow">
+<div class="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5">
+<span class="font-label-md text-label-md">Attendance</span>
+<div class="flex items-center gap-3">
+<span class="font-rating-number text-rating-number text-error">2.25 <span class="text-xs text-on-surface-variant font-normal">/ 5</span></span>
+<div class="flex items-center gap-1 text-on-surface-variant text-sm">
+<span class="material-symbols-outlined text-xs" data-icon="group">group</span>
+                                80
+                            </div>
+</div>
+</div>
+<div class="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5">
+<span class="font-label-md text-label-md">Correction</span>
+<div class="flex items-center gap-3">
+<span class="font-rating-number text-rating-number text-error">1.99 <span class="text-xs text-on-surface-variant font-normal">/ 5</span></span>
+<div class="flex items-center gap-1 text-on-surface-variant text-sm">
+<span class="material-symbols-outlined text-xs" data-icon="group">group</span>
+                                77
+                            </div>
+</div>
+</div>
+<div class="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5">
+<span class="font-label-md text-label-md">Teaching</span>
+<div class="flex items-center gap-3">
+<span class="font-rating-number text-rating-number text-error">2.33 <span class="text-xs text-on-surface-variant font-normal">/ 5</span></span>
+<div class="flex items-center gap-1 text-on-surface-variant text-sm">
+<span class="material-symbols-outlined text-xs" data-icon="group">group</span>
+                                80
+                            </div>
+</div>
+</div>
+</div>
+<button class="w-full py-3 rounded-xl bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-fixed transition-colors">View Full Profile</button>
+</article>
+<article class="glass-card rounded-[2rem] p-6 flex flex-col gap-6 hover:scale-[1.02] transition-transform duration-500 group inner-glow">
+<div class="flex gap-4">
+<div class="relative flex-shrink-0">
+<div class="w-24 h-24 rounded-2xl overflow-hidden border border-white/10">
+<img class="w-full h-full object-cover" data-alt="A portrait of a male professor with glasses and a friendly, intellectual expression, wearing a navy blue blazer. The lighting is professionally staged with a soft rim light that detaches the subject from a subtle, atmospheric blue-grey background. The style is modern, academic, and high-fidelity, designed to integrate seamlessly into a glassmorphic UI." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAqXtCzKIxTNRFwkpX_8vuqJTlnv46IRCxQ7j6jCITLZNAdczZPXtONC0ARM_4A89QJK07WQpGqlBrp09LgRSVYsHDTsucFY6YT4lQNHDDEWWG_--cMa0RMpr-zxntNE9dMQzfMh-lqUacayDURN2IpDqpHhErI93mtoP2VnDa9Dja8YvvSv70n-sVljU9Je4eXHHZLFU9xOPu1OZMny9_zmGBc_BpJIzpvXH_ZeeoL2cneX26rygjxhg"/>
+</div>
+</div>
+<div class="flex flex-col justify-center">
+<h3 class="font-headline-md text-headline-md text-on-surface leading-tight">Dr. Aby Abraham</h3>
+<p class="font-label-md text-label-md text-on-primary-container/80 mt-1">Specialization: Visual Culture</p>
+</div>
+</div>
+<div class="space-y-4 flex-grow">
+<div class="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5">
+<span class="font-label-md text-label-md">Attendance</span>
+<div class="flex items-center gap-3">
+<span class="font-rating-number text-rating-number text-secondary">4.50 <span class="text-xs text-on-surface-variant font-normal">/ 5</span></span>
+<div class="flex items-center gap-1 text-on-surface-variant text-sm">
+<span class="material-symbols-outlined text-xs" data-icon="group">group</span>
+                                210
+                            </div>
+</div>
+</div>
+<div class="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5">
+<span class="font-label-md text-label-md">Correction</span>
+<div class="flex items-center gap-3">
+<span class="font-rating-number text-rating-number text-primary">3.88 <span class="text-xs text-on-surface-variant font-normal">/ 5</span></span>
+<div class="flex items-center gap-1 text-on-surface-variant text-sm">
+<span class="material-symbols-outlined text-xs" data-icon="group">group</span>
+                                198
+                            </div>
+</div>
+</div>
+<div class="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5">
+<span class="font-label-md text-label-md">Teaching</span>
+<div class="flex items-center gap-3">
+<span class="font-rating-number text-rating-number text-secondary">4.12 <span class="text-xs text-on-surface-variant font-normal">/ 5</span></span>
+<div class="flex items-center gap-1 text-on-surface-variant text-sm">
+<span class="material-symbols-outlined text-xs" data-icon="group">group</span>
+                                205
+                            </div>
+</div>
+</div>
+</div>
+<button class="w-full py-3 rounded-xl bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-fixed transition-colors">View Full Profile</button>
+</article>
+<article class="glass-card rounded-[2rem] p-6 flex flex-col gap-6 hover:scale-[1.02] transition-transform duration-500 group inner-glow">
+<div class="flex gap-4">
+<div class="relative flex-shrink-0">
+<div class="w-24 h-24 rounded-2xl overflow-hidden border border-white/10">
+<img class="w-full h-full object-cover" data-alt="Professional corporate headshot of a male lecturer with a warm smile, wearing a white shirt and a red tie. The lighting is clean and high-key, avoiding harsh shadows. The backdrop is a minimalist, slightly out-of-focus campus corridor. The aesthetic is clean, professional, and optimistic, perfectly suited for an educational ranking dashboard." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBytGYYedrHOS9S7obiD-kyneLUNByKM3qRTX-36vcv9fRDSvEbZ54Y2kA_5fg6n7kyWUjBUp8FaFRVCqWebRgy4SbXTkek3ub2KqMINESCdvgpO9Fq4Yb9Q2gEK5gr5JRaTPxpdSpTNvDBWNzMC2FyrHLxXee1592Y5y9NINsfQO_kz86__-SolhsTMRjCrAaSwjNR9ZhuT6CibB679TDdt0kBweEfatuez_GDZsn3DGhEkG8pOL5_Uw"/>
+</div>
+</div>
+<div class="flex flex-col justify-center">
+<h3 class="font-headline-md text-headline-md text-on-surface leading-tight">Dr. Agam Das Goswami</h3>
+<p class="font-label-md text-label-md text-on-primary-container/80 mt-1">Specialization: Machine Learning</p>
+</div>
+</div>
+<div class="space-y-4 flex-grow">
+<div class="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5">
+<span class="font-label-md text-label-md">Attendance</span>
+<div class="flex items-center gap-3">
+<span class="font-rating-number text-rating-number text-secondary">4.88 <span class="text-xs text-on-surface-variant font-normal">/ 5</span></span>
+<div class="flex items-center gap-1 text-on-surface-variant text-sm">
+<span class="material-symbols-outlined text-xs" data-icon="group">group</span>
+                                342
+                            </div>
+</div>
+</div>
+<div class="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5">
+<span class="font-label-md text-label-md">Correction</span>
+<div class="flex items-center gap-3">
+<span class="font-rating-number text-rating-number text-secondary">4.76 <span class="text-xs text-on-surface-variant font-normal">/ 5</span></span>
+<div class="flex items-center gap-1 text-on-surface-variant text-sm">
+<span class="material-symbols-outlined text-xs" data-icon="group">group</span>
+                                330
+                            </div>
+</div>
+</div>
+<div class="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5">
+<span class="font-label-md text-label-md">Teaching</span>
+<div class="flex items-center gap-3">
+<span class="font-rating-number text-rating-number text-secondary">4.92 <span class="text-xs text-on-surface-variant font-normal">/ 5</span></span>
+<div class="flex items-center gap-1 text-on-surface-variant text-sm">
+<span class="material-symbols-outlined text-xs" data-icon="group">group</span>
+                                350
+                            </div>
+</div>
+</div>
+</div>
+<button class="w-full py-3 rounded-xl bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-fixed transition-colors">View Full Profile</button>
+</article>
+<article class="glass-card rounded-[2rem] p-6 flex flex-col gap-6 hover:scale-[1.02] transition-transform duration-500 group inner-glow">
+<div class="flex gap-4">
+<div class="relative flex-shrink-0">
+<div class="w-24 h-24 rounded-2xl overflow-hidden border border-white/10">
+<img class="w-full h-full object-cover" data-alt="A portrait of a male faculty member wearing a pink patterned shirt, looking straight into the lens with a confident expression. The lighting highlights facial features softly, and the background is a professional bokeh blur of a modern office space. The colors are vibrant yet grounded, maintaining a high-end digital aesthetic for a premium university platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQNqEZZVCfzExx3RX90zQ6U3VLiwPa0wS28_Rvvjp2f2JdvnoQ1T2G4h13igdp6usvmftQl8osRNIK9s1M9XeIi45p1CED_2TNKtWVLG1OA-DCmq4eD6jkG7C5LbF22EiEz1e_HUO5Ggs9auOn8NWs9VRGpvVo75PE5tHKNgKJrZS93zQzSLOHWnqIFtoezy5nF50zD_6hocXlSN6-M5kFhao6U_O7XA4bYsCwORQ_3sbZjKdxXFXsLg"/>
+</div>
+</div>
+<div class="flex flex-col justify-center">
+<h3 class="font-headline-md text-headline-md text-on-surface leading-tight">Dr. Ajay Dagar</h3>
+<p class="font-label-md text-label-md text-on-primary-container/80 mt-1">Specialization: Audio Processing</p>
+</div>
+</div>
+<div class="space-y-4 flex-grow">
+<div class="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5">
+<span class="font-label-md text-label-md">Attendance</span>
+<div class="flex items-center gap-3">
+<span class="font-rating-number text-rating-number text-primary">3.22 <span class="text-xs text-on-surface-variant font-normal">/ 5</span></span>
+<div class="flex items-center gap-1 text-on-surface-variant text-sm">
+<span class="material-symbols-outlined text-xs" data-icon="group">group</span>
+                                145
+                            </div>
+</div>
+</div>
+<div class="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5">
+<span class="font-label-md text-label-md">Correction</span>
+<div class="flex items-center gap-3">
+<span class="font-rating-number text-rating-number text-error">2.88 <span class="text-xs text-on-surface-variant font-normal">/ 5</span></span>
+<div class="flex items-center gap-1 text-on-surface-variant text-sm">
+<span class="material-symbols-outlined text-xs" data-icon="group">group</span>
+                                140
+                            </div>
+</div>
+</div>
+<div class="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5">
+<span class="font-label-md text-label-md">Teaching</span>
+<div class="flex items-center gap-3">
+<span class="font-rating-number text-rating-number text-primary">3.45 <span class="text-xs text-on-surface-variant font-normal">/ 5</span></span>
+<div class="flex items-center gap-1 text-on-surface-variant text-sm">
+<span class="material-symbols-outlined text-xs" data-icon="group">group</span>
+                                145
+                            </div>
+</div>
+</div>
+</div>
+<button class="w-full py-3 rounded-xl bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-fixed transition-colors">View Full Profile</button>
+</article>
+</section>
+</main>
+<footer class="w-full py-12 flex flex-col items-center gap-6 mt-auto bg-surface-container-lowest dark:bg-surface-container-lowest backdrop-blur-md border-t border-white/5">
+<div class="font-headline-sm text-headline-sm text-on-surface">Faculty Ranker</div>
+<div class="flex gap-8">
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors underline" href="#">GitHub</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors underline" href="#">Contact us</a>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant opacity-80">© 2023 Faculty Ranker. All rights reserved.</p>
+</footer>
+<script>
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeToggleMobile = document.getElementById('theme-toggle-mobile');
+        const html = document.documentElement;
+
+        function toggleTheme() {
+            html.classList.toggle('dark');
+            const icon = (themeToggle.querySelector('span') || themeToggleMobile.querySelector('span'));
+            if (html.classList.contains('dark')) {
+                themeToggle.innerHTML = '<span class="material-symbols-outlined">light_mode</span>';
+            } else {
+                themeToggle.innerHTML = '<span class="material-symbols-outlined">dark_mode</span>';
+            }
+        }
+
+        themeToggle.addEventListener('click', toggleTheme);
+        themeToggleMobile.addEventListener('click', toggleTheme);
+
+        // Subtle mouse tracking glow for glass cards
+        document.addEventListener('mousemove', (e) => {
+            const cards = document.querySelectorAll('.glass-card');
+            cards.forEach(card => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+            });
+        });
+    </script>
+</body></html>

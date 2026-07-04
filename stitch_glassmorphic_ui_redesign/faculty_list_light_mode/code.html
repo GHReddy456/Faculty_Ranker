@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>All Faculty | Faculty Ranker</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary": "#ffffff",
+                        "inverse-surface": "#2d3133",
+                        "secondary-fixed": "#d3e4fe",
+                        "on-background": "#191c1e",
+                        "secondary-container": "#d0e1fb",
+                        "secondary-fixed-dim": "#b7c8e1",
+                        "tertiary-container": "#bc4800",
+                        "surface-container-highest": "#e0e3e5",
+                        "secondary": "#505f76",
+                        "primary-fixed": "#dbe1ff",
+                        "on-tertiary-container": "#ffede6",
+                        "on-surface": "#191c1e",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "surface-container-high": "#e6e8ea",
+                        "tertiary-fixed-dim": "#ffb596",
+                        "on-surface-variant": "#434655",
+                        "surface-container-low": "#f2f4f6",
+                        "surface-container-lowest": "#ffffff",
+                        "surface": "#f7f9fb",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "primary-container": "#2563eb",
+                        "surface-container": "#eceef0",
+                        "tertiary-fixed": "#ffdbcd",
+                        "on-secondary": "#ffffff",
+                        "on-primary-container": "#eeefff",
+                        "on-secondary-fixed": "#0b1c30",
+                        "background": "#f7f9fb",
+                        "on-tertiary-fixed-variant": "#7d2d00",
+                        "surface-dim": "#d8dadc",
+                        "on-error-container": "#93000a",
+                        "on-secondary-container": "#54647a",
+                        "surface-variant": "#e0e3e5",
+                        "outline-variant": "#c3c6d7",
+                        "tertiary": "#943700",
+                        "inverse-on-surface": "#eff1f3",
+                        "surface-tint": "#0053db",
+                        "surface-bright": "#f7f9fb",
+                        "primary": "#004ac6",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed": "#00174b",
+                        "outline": "#737686",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed": "#360f00",
+                        "on-tertiary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "inverse-primary": "#b4c5ff",
+                        "on-secondary-fixed-variant": "#38485d"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-max": "1280px",
+                        "margin-desktop": "64px",
+                        "unit": "4px",
+                        "margin-mobile": "20px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "display-lg": ["Hanken Grotesk"],
+                        "label-caps": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
+        }
+        .glow-border {
+            border: 1px solid rgba(0, 83, 219, 0.1);
+        }
+        body {
+            background-color: #f7f9fb;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.05) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(180, 197, 255, 0.1) 0px, transparent 50%);
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body class="font-body-md text-on-background">
+<!-- Top Navigation Bar -->
+<nav class="fixed top-0 w-full z-50 bg-white/70 dark:bg-on-background/70 backdrop-blur-xl border-b border-white/20 dark:border-on-background/10 shadow-sm">
+<div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto">
+<div class="font-headline-lg text-headline-lg text-primary dark:text-primary-fixed tracking-tight cursor-pointer active:scale-95 transition-transform duration-200">
+                Faculty Ranker
+            </div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-primary dark:text-primary-fixed border-b-2 border-primary dark:border-primary-fixed pb-1 font-body-md text-body-md cursor-pointer" href="#">All Faculty</a>
+<a class="text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed transition-colors font-body-md text-body-md cursor-pointer" href="#">Rankings</a>
+<a class="text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed transition-colors font-body-md text-body-md cursor-pointer" href="#">Departments</a>
+<a class="text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed transition-colors font-body-md text-body-md cursor-pointer" href="#">About</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="hidden sm:block text-secondary font-body-md text-body-md hover:text-primary transition-colors cursor-pointer">Sign In</button>
+<button class="bg-primary-container text-on-primary px-6 py-2 rounded-full font-body-md text-body-md hover:scale-105 active:scale-95 transition-all duration-200 shadow-md">Join Now</button>
+</div>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="pt-32 pb-24 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+<!-- Header Section -->
+<header class="mb-12 text-center md:text-left">
+<h1 class="font-display-lg text-display-lg text-on-surface mb-4">All Faculty</h1>
+<p class="text-secondary max-w-2xl font-body-md text-body-md">
+                Browse through our comprehensive directory of esteemed academic professionals. Discover rankings, research impact, and student feedback across all departments.
+            </p>
+</header>
+<!-- Search & Filter Bar -->
+<div class="glass-card rounded-2xl p-4 mb-12 flex flex-col md:flex-row gap-4 items-center">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full pl-12 pr-4 py-3 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary/20 font-body-md text-body-md" placeholder="Search by name, department, or research area..." type="text"/>
+</div>
+<button class="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-white border border-outline-variant rounded-xl text-secondary hover:bg-surface-container transition-colors cursor-pointer whitespace-nowrap">
+<span class="material-symbols-outlined">filter_list</span>
+                Filters
+            </button>
+</div>
+<!-- Faculty Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-gutter">
+<!-- Faculty Card 1 -->
+<div class="glass-card rounded-3xl p-6 group hover:scale-[1.02] transition-all duration-300 cursor-pointer glow-border">
+<div class="flex items-start justify-between mb-6">
+<div class="w-20 h-20 rounded-2xl overflow-hidden ring-4 ring-white shadow-sm">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a female professor with a kind smile, wearing academic attire. The background is a brightly lit, modern university office with soft-focus bookshelves and a glass window. The aesthetic is clean, luminous, and scholarly with a blue and white color palette." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDikE9BjzWWDMAxA6cX1WPXHJ0Q0yALqRbxmXlPUQyjsQ5_zI1Byhdp0WusohCyAHYiAjZv-j7UF0cCY3e4lVvYy3lQTjhL6vyQtHIypdDzUUiT2kAJZW8tAlb6TF1Aox7qq5oViHVvtFpdeAp4Z3yrhtu5qOABltRtpJjmwOwGzI4Sz8YNCbJgqIjJRKyDVdEZv6zth1Ly7Ok0ciB9lFwe0Cryy9g27buC6j7PNI9TkLuBvD6fepqTMA"/>
+</div>
+<div class="bg-primary/10 text-primary px-3 py-1 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-caps text-label-caps">4.9</span>
+</div>
+</div>
+<h3 class="font-headline-lg text-[20px] text-on-surface mb-1">Dr. Aastha Madonna Sathe</h3>
+<p class="text-secondary font-label-caps text-label-caps uppercase tracking-wider mb-4">Department of Neuroscience</p>
+<div class="flex flex-wrap gap-2 mb-6">
+<span class="bg-surface-container-high px-3 py-1 rounded-full font-label-caps text-label-caps text-on-surface-variant">Cognitive Science</span>
+<span class="bg-surface-container-high px-3 py-1 rounded-full font-label-caps text-label-caps text-on-surface-variant">Neural Networks</span>
+</div>
+<div class="flex items-center justify-between pt-4 border-t border-outline-variant/30">
+<span class="text-outline font-label-caps text-label-caps">128 Publications</span>
+<button class="text-primary font-label-caps text-label-caps flex items-center gap-1 group-hover:gap-2 transition-all">
+                        VIEW PROFILE <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Faculty Card 2 -->
+<div class="glass-card rounded-3xl p-6 group hover:scale-[1.02] transition-all duration-300 cursor-pointer glow-border">
+<div class="flex items-start justify-between mb-6">
+<div class="w-20 h-20 rounded-2xl overflow-hidden ring-4 ring-white shadow-sm">
+<img class="w-full h-full object-cover" data-alt="A professional portrait of a senior male professor with grey hair and glasses, looking thoughtful and authoritative. He is set against a minimalist architectural background of a modern science lab with clean glass surfaces and bright lighting. The color palette is composed of cool blues, crisp whites, and silver accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQjqqPFYpyV2YfFUwvLHK16Xdgj0qHITw7t2g420Gt_skujG8WimZB7OB0LtCOSsoP13f9EFMq-HuzXpUI1nUOOFb7pPqzMGhjSvUDnI6FNqu1zq4t-ZUH-xUzL_zWcjdrvvRZEhijccz7O5_5f2O_lN2k2LMSltC7krrQ32qK5aZ3SgAldT3yPa7OEmAetUcq5c8yisD-OkDEttFFONaS_jTwCiZaEMgwyPzBRRec-NVoSNB75IWIAQ"/>
+</div>
+<div class="bg-primary/10 text-primary px-3 py-1 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-caps text-label-caps">4.8</span>
+</div>
+</div>
+<h3 class="font-headline-lg text-[20px] text-on-surface mb-1">Dr. Abdul Kayom Md Khairuzzaman</h3>
+<p class="text-secondary font-label-caps text-label-caps uppercase tracking-wider mb-4">Department of Physics</p>
+<div class="flex flex-wrap gap-2 mb-6">
+<span class="bg-surface-container-high px-3 py-1 rounded-full font-label-caps text-label-caps text-on-surface-variant">Quantum Mechanics</span>
+<span class="bg-surface-container-high px-3 py-1 rounded-full font-label-caps text-label-caps text-on-surface-variant">Astrobiology</span>
+</div>
+<div class="flex items-center justify-between pt-4 border-t border-outline-variant/30">
+<span class="text-outline font-label-caps text-label-caps">214 Publications</span>
+<button class="text-primary font-label-caps text-label-caps flex items-center gap-1 group-hover:gap-2 transition-all">
+                        VIEW PROFILE <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Faculty Card 3 -->
+<div class="glass-card rounded-3xl p-6 group hover:scale-[1.02] transition-all duration-300 cursor-pointer glow-border">
+<div class="flex items-start justify-between mb-6">
+<div class="w-20 h-20 rounded-2xl overflow-hidden ring-4 ring-white shadow-sm">
+<img class="w-full h-full object-cover" data-alt="A close-up portrait of a young male academic with a vibrant and energetic expression. He is wearing a modern blazer and is positioned in a bright, airy library with blurred bookshelves behind him. The lighting is high-key and soft, emphasizing a professional yet accessible persona within a luminous academic environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUPr5KORxlWy9BjaCqYQ70oKIRIlpExgAnPe714TR_FELexK8mk0Y-YLrGqdbxDYgTH_VGV7VwD3wTJtUcbPkYWDwIxppbp07sQ2T2fILtiYvu_rFqg0disKOn2Qg-cx11qfqPKDb-Dd4YtnM-FX_8uh1lPBkIcLnmpr7MN8TdHkqBi5qMkAQnTj6ElJCJNAGZFYb8cHJrRKjHxVvSs3yGLJLv-qOZdKy6te6LQ_nXRM3OXGjceLYBTA"/>
+</div>
+<div class="bg-primary/10 text-primary px-3 py-1 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-caps text-label-caps">4.7</span>
+</div>
+</div>
+<h3 class="font-headline-lg text-[20px] text-on-surface mb-1">Dr. Abhishekh</h3>
+<p class="text-secondary font-label-caps text-label-caps uppercase tracking-wider mb-4">Department of Computer Science</p>
+<div class="flex flex-wrap gap-2 mb-6">
+<span class="bg-surface-container-high px-3 py-1 rounded-full font-label-caps text-label-caps text-on-surface-variant">Artificial Intelligence</span>
+<span class="bg-surface-container-high px-3 py-1 rounded-full font-label-caps text-label-caps text-on-surface-variant">Cryptography</span>
+</div>
+<div class="flex items-center justify-between pt-4 border-t border-outline-variant/30">
+<span class="text-outline font-label-caps text-label-caps">89 Publications</span>
+<button class="text-primary font-label-caps text-label-caps flex items-center gap-1 group-hover:gap-2 transition-all">
+                        VIEW PROFILE <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Faculty Card 4 -->
+<div class="glass-card rounded-3xl p-6 group hover:scale-[1.02] transition-all duration-300 cursor-pointer glow-border">
+<div class="flex items-start justify-between mb-6">
+<div class="w-20 h-20 rounded-2xl overflow-hidden ring-4 ring-white shadow-sm">
+<img class="w-full h-full object-cover" data-alt="A dignified middle-aged male professor sitting in a modern study, surrounded by elegant furniture and a large glass window showing a green campus. The lighting is natural and bright, creating a serene and intellectual mood. The visual style is minimal and high-end, utilizing a palette of soft whites and deep blues." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB6KcrydRsEUAPV7e-c9D7AaXO6ImBm1LqS9mPsAPaQMVFPXVMYVXY2k8oOrtvu-yH5OX963YYU5J6tPLfWXWtj8Js6BhRYUpc3cxx_YOvxTVc-jxCtu4iPUNJOH2fHa9Q69eELyaxMXRDly0ppPd7psytsQbqLoaFhngmcL99Re6cXYj0TvhuN4ZcnZ5PUANji0SD5_If05ZDvMfrK2zcnq1gtFPoaWpdR2KDPhPHygtmqY9tLQCF9VA"/>
+</div>
+<div class="bg-primary/10 text-primary px-3 py-1 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-caps text-label-caps">5.0</span>
+</div>
+</div>
+<h3 class="font-headline-lg text-[20px] text-on-surface mb-1">Dr. Aby Abraham</h3>
+<p class="text-secondary font-label-caps text-label-caps uppercase tracking-wider mb-4">Department of Humanities</p>
+<div class="flex flex-wrap gap-2 mb-6">
+<span class="bg-surface-container-high px-3 py-1 rounded-full font-label-caps text-label-caps text-on-surface-variant">Ethical Philosophy</span>
+<span class="bg-surface-container-high px-3 py-1 rounded-full font-label-caps text-label-caps text-on-surface-variant">Linguistics</span>
+</div>
+<div class="flex items-center justify-between pt-4 border-t border-outline-variant/30">
+<span class="text-outline font-label-caps text-label-caps">156 Publications</span>
+<button class="text-primary font-label-caps text-label-caps flex items-center gap-1 group-hover:gap-2 transition-all">
+                        VIEW PROFILE <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Faculty Card 5 -->
+<div class="glass-card rounded-3xl p-6 group hover:scale-[1.02] transition-all duration-300 cursor-pointer glow-border">
+<div class="flex items-start justify-between mb-6">
+<div class="w-20 h-20 rounded-2xl overflow-hidden ring-4 ring-white shadow-sm">
+<img class="w-full h-full object-cover" data-alt="A professional portrait of a senior scientist with a warm expression, wearing a lab coat and standing in a state-of-the-art medical research facility. The environment is clean, clinical, and brightly lit with cool white light. The aesthetic is one of precision and clarity, featuring a palette of medical blues and sterile whites." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8J60xreQkoWRGR-RuZkWYyVOTDLXjeZTTC_txjeTruL01cMLiSDElxP2rlQCqDFArGsw3LgP-W56V_kK6jj4W4NLXo2VN97C2iCQSeWf4Hwu8FRhxDQdELoO0sflzQP64ToAL49BC9qwpSCK3qftmOH_DdzAQnUrGXBxo2An1x1j1rp_KX4gvaMrFOOMFaqf_CugDkDUTyZ_TyPUwaymLMYzmYWYUmluKXiMCo9lxx7PzWcORRILXYQ"/>
+</div>
+<div class="bg-primary/10 text-primary px-3 py-1 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-caps text-label-caps">4.9</span>
+</div>
+</div>
+<h3 class="font-headline-lg text-[20px] text-on-surface mb-1">Dr. Agam Das Goswami</h3>
+<p class="text-secondary font-label-caps text-label-caps uppercase tracking-wider mb-4">Department of Biology</p>
+<div class="flex flex-wrap gap-2 mb-6">
+<span class="bg-surface-container-high px-3 py-1 rounded-full font-label-caps text-label-caps text-on-surface-variant">Microbiology</span>
+<span class="bg-surface-container-high px-3 py-1 rounded-full font-label-caps text-label-caps text-on-surface-variant">Genetics</span>
+</div>
+<div class="flex items-center justify-between pt-4 border-t border-outline-variant/30">
+<span class="text-outline font-label-caps text-label-caps">192 Publications</span>
+<button class="text-primary font-label-caps text-label-caps flex items-center gap-1 group-hover:gap-2 transition-all">
+                        VIEW PROFILE <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Faculty Card 6 -->
+<div class="glass-card rounded-3xl p-6 group hover:scale-[1.02] transition-all duration-300 cursor-pointer glow-border">
+<div class="flex items-start justify-between mb-6">
+<div class="w-20 h-20 rounded-2xl overflow-hidden ring-4 ring-white shadow-sm">
+<img class="w-full h-full object-cover" data-alt="A portrait of a male professor in an industrial design studio, with various sketches and prototypes in the background. The space is filled with natural light from large loft windows. The lighting is bright and clear, emphasizing a modern creative energy. The overall feel is sophisticated and intellectual, with a neutral and blue color scheme." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRs1Fv7pCtFg6jPE8D-IRcgIX-rRO0grQ-QVby9K_aiWwOvMTMYFYhcZvJrhaWbnu2yMlBdkvWEsvj9jjgkaRh-Lukp7UGEK1xEum0x-JKO8zANQiuo6lHqUn18qikwCRm7xkEtK5mioBYm9xLMR6N0v_I8iVZ7tkNL8nyepfvVN3jFq1jonf_OPmvHQ1CmATlRjbBvAGe1SXaaIF5ojsgCm1t66MStG1wLYpRaaK7cHDKXp7FLk02xw"/>
+</div>
+<div class="bg-primary/10 text-primary px-3 py-1 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-caps text-label-caps">4.6</span>
+</div>
+</div>
+<h3 class="font-headline-lg text-[20px] text-on-surface mb-1">Dr. Ajay Dagar</h3>
+<p class="text-secondary font-label-caps text-label-caps uppercase tracking-wider mb-4">Department of Engineering</p>
+<div class="flex flex-wrap gap-2 mb-6">
+<span class="bg-surface-container-high px-3 py-1 rounded-full font-label-caps text-label-caps text-on-surface-variant">Robotics</span>
+<span class="bg-surface-container-high px-3 py-1 rounded-full font-label-caps text-label-caps text-on-surface-variant">Sustainability</span>
+</div>
+<div class="flex items-center justify-between pt-4 border-t border-outline-variant/30">
+<span class="text-outline font-label-caps text-label-caps">112 Publications</span>
+<button class="text-primary font-label-caps text-label-caps flex items-center gap-1 group-hover:gap-2 transition-all">
+                        VIEW PROFILE <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Pagination -->
+<div class="mt-16 flex justify-center items-center gap-4">
+<button class="p-2 rounded-full border border-outline-variant text-outline hover:bg-surface-container transition-colors active:scale-90">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<div class="flex gap-2">
+<button class="w-10 h-10 rounded-full bg-primary text-on-primary font-label-caps text-label-caps shadow-lg">1</button>
+<button class="w-10 h-10 rounded-full bg-white border border-outline-variant text-secondary font-label-caps text-label-caps hover:bg-surface-container transition-colors">2</button>
+<button class="w-10 h-10 rounded-full bg-white border border-outline-variant text-secondary font-label-caps text-label-caps hover:bg-surface-container transition-colors">3</button>
+<span class="flex items-center px-2 text-outline">...</span>
+<button class="w-10 h-10 rounded-full bg-white border border-outline-variant text-secondary font-label-caps text-label-caps hover:bg-surface-container transition-colors">12</button>
+</div>
+<button class="p-2 rounded-full border border-outline-variant text-outline hover:bg-surface-container transition-colors active:scale-90">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-low dark:bg-inverse-surface border-t border-outline-variant/30">
+<div class="flex flex-col md:flex-row justify-between items-center px-margin-mobile md:px-margin-desktop py-12 max-w-container-max mx-auto gap-8">
+<div class="flex flex-col gap-2 items-center md:items-start text-center md:text-left">
+<div class="font-label-caps text-label-caps text-secondary dark:text-secondary-fixed-dim uppercase tracking-widest">Faculty Ranker</div>
+<p class="font-body-md text-body-md text-secondary">© 2024 Faculty Ranker. Empowering academic transparency.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-6">
+<a class="text-secondary-fixed-variant hover:text-primary font-body-md text-body-md transition-all hover:underline cursor-pointer" href="#">Privacy Policy</a>
+<a class="text-secondary-fixed-variant hover:text-primary font-body-md text-body-md transition-all hover:underline cursor-pointer" href="#">Terms of Service</a>
+<a class="text-secondary-fixed-variant hover:text-primary font-body-md text-body-md transition-all hover:underline cursor-pointer" href="#">Contact Support</a>
+<a class="text-secondary-fixed-variant hover:text-primary font-body-md text-body-md transition-all hover:underline cursor-pointer" href="#">Faculty Guidelines</a>
+</div>
+</div>
+</footer>
+<!-- Micro-interaction Script -->
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.glass-card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    card.style.transform = 'translateY(-4px) scale(1.02)';
+                });
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+
+            // Smooth scroll simulation for links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                });
+            });
+        });
+    </script>
+</body></html>

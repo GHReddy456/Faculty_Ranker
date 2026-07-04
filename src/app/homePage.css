@@ -1,0 +1,26 @@
+/* Comet Shape */
+.comet-shape::before {
+  content: "";
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(255, 255, 255, 0.1);
+  -webkit-transform: rotate(-35deg);
+  transform: rotate(-35deg);
+  position: absolute;
+  border-radius: 50px;
+}
+
+/* image overlay linearGradient */
+.img-overlay-gradient::after{
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(rgba(169, 169, 169, 0.455), rgb(26, 26, 26));
+    opacity: 0.8;
+    border-radius: inherit;
+}

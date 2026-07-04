@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Faculty Ranker | Dr. Aastha Madonna Sathe</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Hanken+Grotesk:wght@600;700&family=JetBrains+Mono:wght@500&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@100..900&family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-dim": "#111412",
+            "on-secondary-fixed-variant": "#3c475d",
+            "tertiary-container": "#001b33",
+            "secondary-fixed-dim": "#bbc6e2",
+            "on-primary-container": "#768497",
+            "on-secondary": "#263046",
+            "primary": "#bac8dc",
+            "on-tertiary-fixed-variant": "#2f4865",
+            "primary-fixed-dim": "#bac8dc",
+            "error-container": "#93000a",
+            "on-primary-fixed": "#0f1c2c",
+            "background": "#111412",
+            "surface-bright": "#373a37",
+            "on-background": "#e2e3df",
+            "inverse-on-surface": "#2f312e",
+            "on-error": "#690005",
+            "surface-variant": "#333533",
+            "tertiary-fixed-dim": "#afc9ea",
+            "primary-container": "#0d1b2a",
+            "on-secondary-fixed": "#101b30",
+            "error": "#ffb4ab",
+            "surface-container-low": "#1a1c1a",
+            "on-surface": "#e2e3df",
+            "outline": "#8e9196",
+            "surface-tint": "#bac8dc",
+            "surface-container-lowest": "#0c0f0d",
+            "on-tertiary-container": "#6b85a4",
+            "tertiary-fixed": "#d1e4ff",
+            "on-primary-fixed-variant": "#3a4859",
+            "surface": "#111412",
+            "primary-fixed": "#d6e4f9",
+            "outline-variant": "#44474c",
+            "surface-container-high": "#282b28",
+            "inverse-surface": "#e2e3df",
+            "secondary-container": "#3e4960",
+            "on-error-container": "#ffdad6",
+            "on-surface-variant": "#c4c6cc",
+            "secondary-fixed": "#d7e2ff",
+            "on-tertiary": "#17324d",
+            "surface-container-highest": "#333533",
+            "surface-container": "#1e201e",
+            "inverse-primary": "#525f71",
+            "on-primary": "#243141",
+            "secondary": "#bbc6e2",
+            "on-tertiary-fixed": "#001d36",
+            "tertiary": "#afc9ea",
+            "on-secondary-container": "#adb8d3"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "container-max": "1280px",
+            "gutter": "24px",
+            "margin-mobile": "16px",
+            "unit": "8px",
+            "margin-desktop": "40px"
+          },
+          "fontFamily": {
+            "body-lg": ["Inter"],
+            "label-md": ["JetBrains Mono"],
+            "display-lg": ["Hanken Grotesk"],
+            "headline-lg": ["Hanken Grotesk"],
+            "headline-md": ["Hanken Grotesk"],
+            "body-md": ["Inter"],
+            "rating-number": ["Hanken Grotesk"]
+          },
+          "fontSize": {
+            "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+            "label-md": ["14px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "500"}],
+            "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+            "headline-lg": ["32px", {"lineHeight": "1.2", "fontWeight": "600"}],
+            "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+            "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+            "rating-number": ["28px", {"lineHeight": "1", "fontWeight": "700"}]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .glass-card {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+    
+    .inner-glow {
+      box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.1);
+    }
+
+    .rating-star {
+      font-variation-settings: 'FILL' 0, 'wght' 400;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .rating-star.active {
+      font-variation-settings: 'FILL' 1, 'wght' 400;
+      color: #afc9ea;
+      filter: drop-shadow(0 0 4px rgba(175, 201, 234, 0.5));
+    }
+
+    .shimmer {
+      background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0) 100%);
+      background-size: 200% 100%;
+      animation: shimmer 3s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+
+    body {
+      background-color: #111412;
+      background-image: 
+        radial-gradient(circle at 0% 0%, rgba(186, 200, 220, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 100% 100%, rgba(175, 201, 234, 0.05) 0%, transparent 50%);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col font-body-md text-on-surface">
+<!-- TopNavBar Navigation Shell -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 bg-surface-dim/80 dark:bg-surface-dim/80 backdrop-blur-xl border-b border-white/10 shadow-lg shadow-surface-dim/20">
+<div class="flex items-center gap-4">
+<a class="flex items-center text-on-surface-variant hover:text-on-surface transition-colors" href="#">
+<span class="material-symbols-outlined mr-2">arrow_back</span>
+</a>
+<span class="font-headline-md text-headline-md font-bold text-on-surface dark:text-on-surface">Faculty Ranker</span>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="font-label-md text-label-md text-primary border-b-2 border-primary pb-1" href="#">All Faculty</a>
+<button class="font-label-md text-label-md px-6 py-2 rounded-full border border-primary/30 text-primary hover:bg-white/5 transition-all duration-300 active:scale-95">Sign In</button>
+</nav>
+</header>
+<main class="flex-grow pt-24 pb-16 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto w-full">
+<!-- Profile Header Section -->
+<section class="mb-12">
+<div class="glass-card rounded-3xl p-6 md:p-8 flex flex-col md:flex-row gap-8 items-start relative overflow-hidden">
+<div class="absolute inset-0 shimmer pointer-events-none"></div>
+<!-- Profile Image -->
+<div class="relative z-10 w-full md:w-64 aspect-[3/4] overflow-hidden rounded-2xl border border-white/10">
+<img class="w-full h-full object-cover" data-alt="A professional studio portrait of a female academic professor, Dr. Aastha Madonna Sathe, in her late 30s. She is smiling warmly against a soft-focus background of a library. The lighting is bright and ethereal, matching a glassmorphism UI aesthetic with cool teal and blue tones. High-end photography style, clean and modern." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1-QGG3qyNwKDad3nV8hqdWjX4QuITVMqmU-y1ba-JZs6bYwClF395SO1IOIeizjGqifdvX1EuJl2Qtbc7p8J9QS_BncfyQMWPzkxlZMYiWofWTwDG60HXFeery3ou__budgDYbcR69v02VboyE2KEZPNWRfpHUz6XujQtbRAnZQRciPyeTgkndmlbv8mC7DOdDuCZZheE27ykcvoO2AQClDDqv_sNKMUXOZpyyeW3UqjABag4PsM4_w"/>
+</div>
+<div class="flex-1 z-10">
+<div class="flex flex-col gap-2 mb-6">
+<h1 class="font-headline-lg text-headline-lg text-on-surface">Dr. Aastha Madonna Sathe</h1>
+<p class="text-on-surface-variant max-w-2xl leading-relaxed">
+<span class="font-bold text-primary mr-2">Specialization Areas:</span> 
+              Computational Statistics, Stable Distributions, Time Series Analysis, Forecasting, Artificial Neural Networks
+            </p>
+</div>
+<!-- Summary Score Bento -->
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+<div class="glass-card inner-glow p-4 rounded-2xl flex flex-col items-center justify-center gap-1 border-primary/20">
+<span class="font-rating-number text-rating-number text-primary">3.98</span>
+<span class="font-label-md text-label-md uppercase tracking-widest text-on-secondary-container">Attendance</span>
+</div>
+<div class="glass-card inner-glow p-4 rounded-2xl flex flex-col items-center justify-center gap-1 border-primary/20">
+<span class="font-rating-number text-rating-number text-tertiary">3.59</span>
+<span class="font-label-md text-label-md uppercase tracking-widest text-on-secondary-container">Correction</span>
+</div>
+<div class="glass-card inner-glow p-4 rounded-2xl flex flex-col items-center justify-center gap-1 border-primary/20">
+<span class="font-rating-number text-rating-number text-primary">3.99</span>
+<span class="font-label-md text-label-md uppercase tracking-widest text-on-secondary-container">Teaching</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Rating Form Section -->
+<section>
+<div class="glass-card rounded-3xl p-6 md:p-8">
+<h2 class="font-headline-md text-headline-md mb-8 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">rate_review</span>
+          Rate the faculty
+        </h2>
+<form class="space-y-10" onsubmit="event.preventDefault();">
+<!-- Rating Rows -->
+<div class="grid gap-10">
+<!-- Attendance Rating -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-headline-md text-on-surface">Attendance Rating</span>
+<span class="material-symbols-outlined text-on-surface-variant text-sm cursor-help" title="Amount of leniency in taking attendance">help</span>
+</div>
+<p class="font-body-md text-on-surface-variant">Amount of leniency in taking attendance</p>
+</div>
+<div class="flex gap-2 rating-group" data-group="attendance">
+<span class="material-symbols-outlined rating-star text-3xl" data-value="1">star</span>
+<span class="material-symbols-outlined rating-star text-3xl" data-value="2">star</span>
+<span class="material-symbols-outlined rating-star text-3xl" data-value="3">star</span>
+<span class="material-symbols-outlined rating-star text-3xl" data-value="4">star</span>
+<span class="material-symbols-outlined rating-star text-3xl" data-value="5">star</span>
+</div>
+</div>
+<!-- Correction Rating -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-headline-md text-on-surface">Correction Rating</span>
+<span class="material-symbols-outlined text-on-surface-variant text-sm cursor-help" title="Leniency in correction of papers">help</span>
+</div>
+<p class="font-body-md text-on-surface-variant">Amount of leniency in correction</p>
+</div>
+<div class="flex gap-2 rating-group" data-group="correction">
+<span class="material-symbols-outlined rating-star text-3xl" data-value="1">star</span>
+<span class="material-symbols-outlined rating-star text-3xl" data-value="2">star</span>
+<span class="material-symbols-outlined rating-star text-3xl" data-value="3">star</span>
+<span class="material-symbols-outlined rating-star text-3xl" data-value="4">star</span>
+<span class="material-symbols-outlined rating-star text-3xl" data-value="5">star</span>
+</div>
+</div>
+<!-- Teaching Rating -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-headline-md text-on-surface">Teaching Rating</span>
+<span class="material-symbols-outlined text-on-surface-variant text-sm cursor-help" title="Experience and quality of teaching">help</span>
+</div>
+<p class="font-body-md text-on-surface-variant">Experience in teaching</p>
+</div>
+<div class="flex gap-2 rating-group" data-group="teaching">
+<span class="material-symbols-outlined rating-star text-3xl" data-value="1">star</span>
+<span class="material-symbols-outlined rating-star text-3xl" data-value="2">star</span>
+<span class="material-symbols-outlined rating-star text-3xl" data-value="3">star</span>
+<span class="material-symbols-outlined rating-star text-3xl" data-value="4">star</span>
+<span class="material-symbols-outlined rating-star text-3xl" data-value="5">star</span>
+</div>
+</div>
+</div>
+<!-- Submit Action -->
+<div class="pt-8 border-t border-white/5">
+<button class="bg-primary hover:bg-primary-fixed-dim text-on-primary-fixed px-12 py-4 rounded-xl font-headline-md transition-all duration-300 transform active:scale-95 hover:shadow-[0_0_20px_rgba(186,200,220,0.4)]">
+              Submit
+            </button>
+</div>
+</form>
+</div>
+</section>
+</main>
+<!-- Footer Shell -->
+<footer class="w-full py-8 flex flex-col items-center gap-4 mt-auto bg-surface-container-lowest dark:bg-surface-container-lowest backdrop-blur-md border-t border-white/5">
+<div class="flex gap-8">
+<a class="font-label-md text-label-md text-tertiary dark:text-tertiary hover:text-primary transition-colors underline opacity-80 hover:opacity-100" href="#">GitHub</a>
+<a class="font-label-md text-label-md text-tertiary dark:text-tertiary hover:text-primary transition-colors underline opacity-80 hover:opacity-100" href="#">Contact us</a>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">© 2023 Faculty Ranker. All rights reserved.</p>
+</footer>
+<script>
+    // Rating star logic
+    document.querySelectorAll('.rating-group').forEach(group => {
+      const stars = group.querySelectorAll('.rating-star');
+      stars.forEach(star => {
+        star.addEventListener('mouseenter', () => {
+          const val = parseInt(star.dataset.value);
+          highlightStars(stars, val);
+        });
+
+        star.addEventListener('mouseleave', () => {
+          const currentVal = group.dataset.rating || 0;
+          highlightStars(stars, currentVal);
+        });
+
+        star.addEventListener('click', () => {
+          group.dataset.rating = star.dataset.value;
+          highlightStars(stars, star.dataset.value);
+        });
+      });
+    });
+
+    function highlightStars(stars, count) {
+      stars.forEach(s => {
+        if (parseInt(s.dataset.value) <= count) {
+          s.classList.add('active');
+        } else {
+          s.classList.remove('active');
+        }
+      });
+    }
+  </script>
+</body></html>
