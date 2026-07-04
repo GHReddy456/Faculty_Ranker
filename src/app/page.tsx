@@ -34,7 +34,7 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="flex flex-grow flex-col px-margin-mobile pb-16 pt-32 md:px-margin-desktop">
+      <main className="relative z-20 flex flex-grow flex-col px-margin-mobile pb-24 pt-32 md:px-margin-desktop">
         <div className="container-max relative mx-auto flex h-full flex-col items-center justify-between gap-12 md:flex-row">
           <div className="z-10 w-full text-center md:w-1/2 md:text-left">
             <h1 className="mb-6 font-display-lg text-display-lg leading-tight tracking-tight text-white">
@@ -57,9 +57,9 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="relative h-full min-h-[400px] w-full md:w-5/12 md:aspect-auto">
+          <div className="relative z-20 mt-4 h-full min-h-[400px] w-full md:w-5/12 md:aspect-auto">
             <div className="absolute right-[10%] top-[10%] h-4/5 w-4/5 rounded-3xl bg-secondary/10 blur-2xl" />
-            <div className="glass-card absolute right-0 top-0 h-[90%] w-full rotate-3 overflow-hidden rounded-3xl p-4 transition-transform duration-700 hover:rotate-0">
+            <div className="glass-card absolute right-0 top-0 z-20 h-[90%] w-full rotate-3 overflow-hidden rounded-3xl p-4 transition-transform duration-700 hover:rotate-0">
               <div className="inner-glow relative h-full w-full overflow-hidden rounded-2xl">
                 <img className="h-full w-full object-cover" src="/stitch_glassmorphic_ui_redesign/shutterstock_2183363749-scaled.jpg" alt="Faculty illustration" />
                 <div className="absolute bottom-6 left-6 right-6 flex flex-col gap-2 rounded-xl border border-white/20 bg-white/5 p-4 backdrop-blur-xl">
@@ -80,7 +80,7 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            <div className="glass-card absolute -bottom-4 -left-4 animate-float rounded-2xl border border-white/20 p-6" style={{ animationDelay: "-2s" }}>
+            <div className="glass-card absolute -bottom-4 -left-4 z-30 animate-float rounded-2xl border border-white/20 p-6" style={{ animationDelay: "-2s" }}>
               <div className="flex items-center gap-4">
                 <div className="flex h-12 w-12 items-center justify-center rounded-full border border-tertiary/30 bg-tertiary-container/50">
                   <span className="material-symbols-outlined text-tertiary">analytics</span>
@@ -95,7 +95,7 @@ export default function Home() {
         </div>
       </main>
 
-      <section className="bg-surface-container-low/50 px-margin-mobile py-20 backdrop-blur-sm md:px-margin-desktop">
+      <section className="relative z-0 -mt-14 bg-surface-container-low/50 px-margin-mobile py-24 pt-28 backdrop-blur-sm md:-mt-16 md:px-margin-desktop md:pt-32">
         <div className="container-max mx-auto">
           <div className="grid gap-8 md:grid-cols-3">
             {[

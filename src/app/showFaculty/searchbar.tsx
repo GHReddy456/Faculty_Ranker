@@ -1,13 +1,15 @@
 export function SearchBar({
   className = "",
+  value = "",
   onChange,
 }: {
   className?: string;
+  value?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) {
   return (
-    <div className={"w-full max-w-2xl " + className}>
-      <div className="relative flex h-14 w-full items-center overflow-hidden rounded-full border border-white/10 bg-white/5 shadow-lg shadow-slate-950/40 backdrop-blur-xl">
+    <div className={"relative isolate z-[200] w-full max-w-2xl " + className}>
+      <div className="relative flex h-14 w-full items-center overflow-visible rounded-full border border-white/10 bg-white/5 shadow-lg shadow-slate-950/40 backdrop-blur-xl">
         <div className="grid h-full w-14 place-items-center text-slate-400">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -29,6 +31,7 @@ export function SearchBar({
           className="peer h-full w-full bg-transparent px-2 pr-4 text-sm text-slate-100 outline-none placeholder:text-slate-500"
           type="text"
           id="search"
+          value={value}
           onChange={onChange}
           placeholder="Search Faculty"
         />

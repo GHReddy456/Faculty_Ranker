@@ -3,7 +3,8 @@
 import Link from "next/link";
 import FallbackImage from "@/components/FallbackImage";
 
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   getPreviousStateFromLocalStorage,
   savePreviousStateToLocalStorage,
@@ -13,25 +14,47 @@ import { LoadingCardComponent } from "@/components/loadingCard";
 import { SearchBar } from "./searchbar";
 import { queryFacultyData } from "./query_faculty";
 
-const FALLBACK_FACULTY_DATA: FacultyData[] = queryFacultyData.slice(0, 6).map((faculty, index) => ({
-  id: faculty.id,
-  name: faculty.name,
-  image_url: faculty.image_url,
-  specialization: faculty.specialization,
-  teaching_rating: [3.99, 3.91, 3.86, 3.82, 3.78, 3.74][index % 6],
-  attendance_rating: [3.98, 3.88, 3.79, 3.76, 3.72, 3.69][index % 6],
-  correction_rating: [3.59, 3.74, 3.65, 3.61, 3.58, 3.55][index % 6],
-  num_teaching_ratings: [120, 102, 88, 95, 83, 79][index % 6],
-  num_attendance_ratings: [115, 98, 84, 90, 79, 74][index % 6],
-  num_correction_ratings: [110, 95, 81, 86, 76, 71][index % 6],
-}));
+const ITEMS_PER_PAGE = 6;
+
+const buildFacultyData = (searchTerm: string): FacultyData[] => {
+  const normalizedQuery = searchTerm.trim().toLowerCase();
+  const source = queryFacultyData.map((faculty, index) => ({
+    id: faculty.id,
+    name: faculty.name,
+    image_url: faculty.image_url,
+    specialization: faculty.specialization,
+    teaching_rating: [3.99, 3.91, 3.86, 3.82, 3.78, 3.74][index % 6],
+    attendance_rating: [3.98, 3.88, 3.79, 3.76, 3.72, 3.69][index % 6],
+    correction_rating: [3.59, 3.74, 3.65, 3.61, 3.58, 3.55][index % 6],
+    num_teaching_ratings: [120, 102, 88, 95, 83, 79][index % 6],
+    num_attendance_ratings: [115, 98, 84, 90, 79, 74][index % 6],
+    num_correction_ratings: [110, 95, 81, 86, 76, 71][index % 6],
+  }));
+
+  if (!normalizedQuery) {
+    return source;
+  }
+
+  return source.filter((faculty) => {
+    const searchableText = `${faculty.name} ${faculty.specialization ?? ""}`.toLowerCase();
+    return searchableText.includes(normalizedQuery);
+  });
+};
+
+const getFacultyPage = (searchTerm: string, pageIndex: number): FacultyData[] => {
+  const allFaculty = buildFacultyData(searchTerm);
+  const startIndex = pageIndex * ITEMS_PER_PAGE;
+  return allFaculty.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+};
 
 export default function RenderFacultyGrid() {
   const [faculty_details_with_ratings, setFaculty_details_with_ratings] =
-    useState<FacultyData[]>(FALLBACK_FACULTY_DATA);
+    useState<FacultyData[]>(() => getFacultyPage("", 0));
 
   const [loading, setLoading] = useState(false);
   const [pageIndex, setIndex] = useState(0);
+  const [searchTerm, setSearchTerm] = useState("");
+  const totalPages = Math.max(1, Math.ceil(buildFacultyData(searchTerm).length / ITEMS_PER_PAGE));
 
   useEffect(() => {
     const previousState = getPreviousStateFromLocalStorage();
@@ -40,15 +63,21 @@ export default function RenderFacultyGrid() {
   }, []);
 
   useEffect(() => {
-    setFaculty_details_with_ratings(
-      FALLBACK_FACULTY_DATA.map((faculty, index) => ({
-        ...faculty,
-        id: `${faculty.id}-${pageIndex}-${index}`,
-      })),
-    );
+    const safePageIndex = Math.min(pageIndex, Math.max(0, totalPages - 1));
+    if (safePageIndex !== pageIndex) {
+      setIndex(safePageIndex);
+      return;
+    }
+
+    const nextFaculty = getFacultyPage(searchTerm, safePageIndex).map((faculty, index) => ({
+      ...faculty,
+      id: `${faculty.id}-${safePageIndex}-${index}`,
+    }));
+
+    setFaculty_details_with_ratings(nextFaculty);
     setLoading(false);
-    savePreviousStateToLocalStorage({ index: pageIndex });
-  }, [pageIndex]);
+    savePreviousStateToLocalStorage({ index: safePageIndex });
+  }, [pageIndex, searchTerm, totalPages]);
 
   return (
     <div className="min-h-screen flex flex-col overflow-x-hidden bg-surface-dim text-on-surface selection:bg-primary selection:text-primary-container font-body-md">
@@ -73,7 +102,7 @@ export default function RenderFacultyGrid() {
 
       <main className="flex flex-grow flex-col px-margin-mobile pb-16 pt-32 md:px-margin-desktop">
         <div className="container-max mx-auto w-full space-y-8">
-          <section className="glass-card rounded-[2rem] p-6 sm:p-8 lg:p-10">
+          <section className="glass-card relative z-10 overflow-visible rounded-[2rem] p-6 sm:p-8 lg:p-10">
             <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
               <div className="max-w-2xl">
                 <p className="text-sm uppercase tracking-[0.35em] text-primary/80">Academic transparency</p>
@@ -82,7 +111,14 @@ export default function RenderFacultyGrid() {
                   Explore transparent faculty performance insights across attendance, correction, and teaching metrics for VIT-AP University.
                 </p>
               </div>
-              <FacultyFilterSearchBar className="w-full max-w-xl lg:ml-auto" />
+              <FacultyFilterSearchBar
+                className="w-full max-w-xl lg:ml-auto"
+                value={searchTerm}
+                onChange={(value) => {
+                  setSearchTerm(value);
+                  setIndex(0);
+                }}
+              />
             </div>
           </section>
 
@@ -111,19 +147,22 @@ export default function RenderFacultyGrid() {
           <div className="flex flex-wrap justify-center gap-4 pt-4">
             <button
               onClick={() => {
-                if (pageIndex > 0) {
-                  setIndex(pageIndex - 1);
-                }
+                setIndex((current) => Math.max(0, current - 1));
               }}
-              className="rounded-full border border-white/10 bg-white/10 px-5 py-2 text-sm font-semibold text-slate-100 transition hover:bg-white/20"
+              disabled={pageIndex === 0}
+              className="rounded-full border border-white/10 bg-white/10 px-5 py-2 text-sm font-semibold text-slate-100 transition hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-50"
             >
               Previous
             </button>
+            <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-300">
+              Page {pageIndex + 1} of {totalPages}
+            </div>
             <button
               onClick={() => {
-                setIndex(pageIndex + 1);
+                setIndex((current) => Math.min(totalPages - 1, current + 1));
               }}
-              className="rounded-full border border-primary/30 bg-primary/10 px-5 py-2 text-sm font-semibold text-primary transition hover:bg-primary/20"
+              disabled={pageIndex >= totalPages - 1}
+              className="rounded-full border border-primary/30 bg-primary/10 px-5 py-2 text-sm font-semibold text-primary transition hover:bg-primary/20 disabled:cursor-not-allowed disabled:opacity-50"
             >
               Next
             </button>
@@ -138,61 +177,108 @@ export default function RenderFacultyGrid() {
         </div>
         <div className="flex flex-col items-center gap-2">
           <span className="font-headline-md text-headline-md text-on-surface opacity-50">Faculty Ranker</span>
-          <p className="font-body-md text-body-md text-on-surface-variant/60">© 2023 Faculty Ranker. All rights reserved.</p>
+          <p className="font-body-md text-body-md text-on-surface-variant/60">© 2026 Faculty Ranker. All rights reserved.</p>
         </div>
       </footer>
     </div>
   );
 }
 
-function FacultyFilterSearchBar({ className = "" }) {
+function FacultyFilterSearchBar({
+  className = "",
+  value = "",
+  onChange,
+}: {
+  className?: string;
+  value?: string;
+  onChange?: (value: string) => void;
+}) {
   const facultySearchData = queryFacultyData;
   const [filteredData, setFilteredData] = useState<FacultyQueryData[]>([]);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [dropdownStyle, setDropdownStyle] = useState({ top: 0, left: 0, width: 0 });
+
+  useEffect(() => {
+    const updateDropdownPosition = () => {
+      if (!containerRef.current) return;
+
+      const rect = containerRef.current.getBoundingClientRect();
+      setDropdownStyle({
+        top: rect.bottom + 8,
+        left: rect.left,
+        width: rect.width,
+      });
+    };
+
+    updateDropdownPosition();
+    window.addEventListener("resize", updateDropdownPosition);
+    window.addEventListener("scroll", updateDropdownPosition, true);
+
+    return () => {
+      window.removeEventListener("resize", updateDropdownPosition);
+      window.removeEventListener("scroll", updateDropdownPosition, true);
+    };
+  }, [filteredData, value]);
 
   const filterSearchData = (e: ChangeEvent<HTMLInputElement>) => {
     const text = e.target.value;
+    if (onChange) {
+      onChange(text);
+    }
+
     if (text.length < 2) {
       setFilteredData([]);
       return;
     }
+
     const _filteredData = facultySearchData.filter((faculty) => {
-      return faculty.name.toLowerCase().includes(text.toLowerCase());
+      const searchableText = `${faculty.name} ${faculty.specialization ?? ""}`.toLowerCase();
+      return searchableText.includes(text.toLowerCase());
     });
     setFilteredData(_filteredData);
   };
 
   return (
-    <div className={"relative " + className}>
-      <SearchBar onChange={filterSearchData} />
-      <div
-        className={"absolute top-[100%] mt-2 w-full " +
-          (filteredData.length > 0 ? " " : "hidden")}
-      >
-        <div className="z-10 max-h-52 overflow-y-auto rounded-2xl border border-white/10 bg-slate-950/90 shadow-2xl shadow-slate-950/50">
-          {filteredData.map((faculty) => (
-            <Link
-              key={faculty.id}
-              href={{
-                pathname: `/faculty/${faculty.id}`,
-                query: {
-                  ...faculty,
-                },
+    <div ref={containerRef} className={"relative isolate z-[300] " + className}>
+      <SearchBar value={value} onChange={filterSearchData} />
+      {filteredData.length > 0 && typeof document !== "undefined"
+        ? createPortal(
+            <div
+              className="fixed z-[9999]"
+              style={{
+                top: dropdownStyle.top,
+                left: dropdownStyle.left,
+                width: dropdownStyle.width,
               }}
             >
-              <div className="flex items-center gap-3 p-3 transition hover:bg-white/10">
-                <FallbackImage
-                  src={faculty.image_url}
-                  width={36}
-                  height={36}
-                  className="rounded-xl"
-                  alt={faculty.name}
-                />
-                <p className="text-sm text-slate-200">{faculty.name}</p>
+              <div className="relative z-[10000] max-h-52 overflow-y-auto rounded-2xl border border-white/10 bg-slate-950/95 shadow-2xl shadow-slate-950/50">
+                {filteredData.map((faculty) => (
+                  <Link
+                    key={faculty.id}
+                    href={{
+                      pathname: `/faculty/${faculty.id}`,
+                      query: {
+                        ...faculty,
+                      },
+                    }}
+                  >
+                    <div className="flex items-center gap-3 p-3 transition hover:bg-white/10">
+                      <FallbackImage
+                        src={faculty.image_url}
+                        width={36}
+                        height={36}
+                        className="rounded-xl"
+                        alt={faculty.name}
+                      />
+                      <p className="text-sm text-slate-200">{faculty.name}</p>
+                    </div>
+                  </Link>
+                ))}
               </div>
-            </Link>
-          ))}
-        </div>
-      </div>
+            </div>,
+            document.body,
+          )
+        : null}
     </div>
   );
 }
