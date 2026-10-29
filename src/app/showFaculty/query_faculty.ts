@@ -1,5 +1,5 @@
 // DATA_VERSION: bump this whenever faculty data changes to bust Vercel CDN cache
-export const FACULTY_DATA_VERSION = "2026-10-29-v618";
+export const FACULTY_DATA_VERSION = "2026-10-29-cabin-update";
 
 export const queryFacultyData: FacultyQueryData[] = [
   {
