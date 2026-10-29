@@ -203,36 +203,36 @@ export default function SingleFacultyPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-surface-dim text-on-surface font-body-md">
-      <header className="fixed top-0 left-0 z-50 flex w-full items-center justify-between border-b border-white/10 bg-surface-dim/80 px-margin-mobile py-4 shadow-lg shadow-surface-dim/20 backdrop-blur-xl md:px-margin-desktop">
+      <header className="anim-slide-down fixed top-0 left-0 z-50 flex w-full items-center justify-between border-b border-white/10 bg-surface-dim/80 px-margin-mobile py-4 shadow-lg shadow-surface-dim/20 backdrop-blur-xl md:px-margin-desktop">
         <div className="flex items-center gap-4">
-          <a className="flex items-center text-on-surface-variant transition-colors hover:text-on-surface" href="/showFaculty">
-            <span className="material-symbols-outlined mr-2">arrow_back</span>
+          <a className="group flex items-center text-on-surface-variant transition-colors hover:text-on-surface" href="/showFaculty">
+            <span className="material-symbols-outlined mr-2 transition-transform duration-300 group-hover:-translate-x-1">arrow_back</span>
           </a>
           <span className="font-headline-md text-headline-md font-bold text-on-surface">Faculty Ranker</span>
         </div>
         <nav className="hidden items-center gap-8 md:flex">
-          <a className="font-label-md text-label-md text-on-surface-variant transition-all duration-300 hover:text-on-surface" href="/">Home</a>
+          <a className="nav-link font-label-md text-label-md text-on-surface-variant transition-all duration-300 hover:text-on-surface" href="/">Home</a>
           <a className="border-b-2 border-primary pb-1 font-label-md text-label-md text-primary" href="/showFaculty">All Faculty</a>
         </nav>
         <div className="hidden md:block">
           {!user ? (
-            <button onClick={signInWithGoogle} className="rounded-lg border border-primary/30 bg-primary px-6 py-2 font-label-md text-label-md text-on-primary-fixed transition-all duration-300 active:scale-95 hover:bg-primary/90">Sign In</button>
+            <button onClick={signInWithGoogle} className="btn-shine rounded-lg border border-primary/30 bg-primary px-6 py-2 font-label-md text-label-md text-on-primary-fixed transition-all duration-300 active:scale-95 hover:bg-primary/90 hover:shadow-[0_0_16px_rgba(186,200,220,0.35)]">Sign In</button>
           ) : (
-            <button onClick={signOutWithGoogle} className="rounded-lg border border-error/30 bg-error/10 px-6 py-2 font-label-md text-label-md text-error transition-all duration-300 active:scale-95 hover:bg-error/20">Sign Out</button>
+            <button onClick={signOutWithGoogle} className="btn-shine rounded-lg border border-error/30 bg-error/10 px-6 py-2 font-label-md text-label-md text-error transition-all duration-300 active:scale-95 hover:bg-error/20">Sign Out</button>
           )}
         </div>
       </header>
 
       <main className="mx-auto flex w-full max-w-container-max flex-grow flex-col px-margin-mobile pb-16 pt-24 md:px-margin-desktop">
         <section className="mb-12">
-          <div className="glass-card relative flex flex-col items-start gap-8 overflow-hidden rounded-3xl p-6 md:flex-row md:p-8">
+          <div className="glass-card anim-rise relative flex flex-col items-start gap-8 overflow-hidden rounded-3xl p-6 md:flex-row md:p-8">
             <div className="pointer-events-none absolute inset-0 shimmer" />
-            <div className="relative z-10 aspect-[3/4] w-full overflow-hidden rounded-2xl border border-white/10 md:w-64">
-              <Image className="h-full w-full object-cover" src={facultyImage} alt={facultyName} fill sizes="(max-width: 768px) 100vw, 256px" />
+            <div className="anim-scale d-1 relative z-10 aspect-[3/4] w-full overflow-hidden rounded-2xl border border-white/10 md:w-64">
+              <Image className="h-full w-full object-cover transition-transform duration-700 ease-out hover:scale-105" src={facultyImage} alt={facultyName} fill sizes="(max-width: 768px) 100vw, 256px" />
             </div>
             <div className="relative z-10 flex-1">
               <div className="mb-6 flex flex-col gap-2">
-                <h1 className="font-headline-lg text-headline-lg text-on-surface">{facultyName}</h1>
+                <h1 className="anim-blur d-2 font-headline-lg text-headline-lg text-on-surface">{facultyName}</h1>
                 {details?.designation && (
                   <p className="text-primary font-bold text-lg">{details.designation}</p>
                 )}
@@ -266,8 +266,8 @@ export default function SingleFacultyPage() {
                   { label: "Attendance", value: attendanceRating },
                   { label: "Correction", value: correctionRating },
                   { label: "Teaching", value: teachingRating },
-                ].map((item) => (
-                  <div key={item.label} className="glass-card inner-glow flex flex-col items-center justify-center gap-1 rounded-2xl border-primary/20 p-4">
+                ].map((item, index) => (
+                  <div key={item.label} className={`glass-card inner-glow anim-scale flex flex-col items-center justify-center gap-1 rounded-2xl border-primary/20 p-4 transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-[0_0_20px_rgba(186,200,220,0.15)] d-${index + 3}`}>
                     {loadingRatings ? (
                       <span className="h-8 w-16 animate-pulse rounded-md bg-white/10" />
                     ) : (
@@ -285,17 +285,17 @@ export default function SingleFacultyPage() {
 
         {details && (
           <section className="mb-12">
-            <div className="glass-card rounded-3xl p-6 md:p-8">
+            <div className="glass-card anim-rise d-2 rounded-3xl p-6 md:p-8">
               {/* Tab Header */}
               <div className="flex overflow-x-auto border-b border-primary/20 pb-2 mb-8 hide-scrollbar gap-2">
                 {["Education", "Research", "Projects", "Patents", "Awards"].map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    className={`px-8 py-4 font-headline-md text-sm sm:text-base font-bold whitespace-nowrap transition-all duration-300 ${
+                    className={`px-8 py-4 font-headline-md text-sm sm:text-base font-bold whitespace-nowrap transition-all duration-300 active:scale-95 ${
                       activeTab === tab
-                        ? "bg-[#6a0012] text-white" 
-                        : "bg-[#fcebee] text-[#6a0012] hover:bg-[#fad3db]"
+                        ? "bg-[#6a0012] text-white shadow-lg shadow-[#6a0012]/40 scale-105"
+                        : "bg-[#fcebee] text-[#6a0012] hover:bg-[#fad3db] hover:-translate-y-0.5"
                     }`}
                   >
                     {tab}
@@ -450,7 +450,7 @@ export default function SingleFacultyPage() {
         )}
 
         <section>
-          <div className="glass-card rounded-3xl p-6 md:p-8">
+          <div className="glass-card anim-rise d-3 rounded-3xl p-6 md:p-8">
             <h2 className="mb-8 flex items-center gap-2 font-headline-md text-headline-md">
               <span className="material-symbols-outlined text-primary">rate_review</span>
               Rate the faculty
@@ -487,7 +487,7 @@ export default function SingleFacultyPage() {
                 ))}
               </div>
               <div className="border-t border-white/5 pt-8">
-                <button type="submit" disabled={isSubmitting} className="rounded-xl bg-primary px-12 py-4 font-headline-md text-on-primary-fixed transition-all duration-300 hover:bg-primary-fixed-dim hover:shadow-[0_0_20px_rgba(186,200,220,0.4)] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
+                <button type="submit" disabled={isSubmitting} className="btn-shine rounded-xl bg-primary px-12 py-4 font-headline-md text-on-primary-fixed transition-all duration-300 hover:-translate-y-0.5 hover:bg-primary-fixed-dim hover:shadow-[0_0_24px_rgba(186,200,220,0.45)] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0">
                   {isSubmitting ? "Submitting..." : (!user ? "Sign In to Rate" : "Submit")}
                 </button>
               </div>

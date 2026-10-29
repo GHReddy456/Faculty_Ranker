@@ -93,6 +93,276 @@ body::selection {
   animation: float 6s ease-in-out infinite;
 }
 
+/* ===================== Animation Library ===================== */
+
+/* --- Entrance keyframes --- */
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(28px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes blur-in {
+  from { opacity: 0; filter: blur(14px); transform: translateY(14px); }
+  to { opacity: 1; filter: blur(0); transform: translateY(0); }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes fade-simple {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-100%); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Entrance utilities — `backwards` fill so hover transforms/transitions
+   still work after the animation completes */
+.anim-rise { animation: rise-in 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) backwards; }
+.anim-blur { animation: blur-in 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) backwards; }
+.anim-scale { animation: scale-in 0.7s cubic-bezier(0.34, 1.3, 0.5, 1) backwards; }
+.anim-fade { animation: fade-simple 0.9s ease backwards; }
+.anim-slide-down { animation: slide-down 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) backwards; }
+.anim-rise-float {
+  animation:
+    rise-in 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) 0.5s backwards,
+    float 6s ease-in-out 1.3s infinite;
+}
+
+/* Stagger delays */
+.d-1 { animation-delay: 0.1s; }
+.d-2 { animation-delay: 0.2s; }
+.d-3 { animation-delay: 0.32s; }
+.d-4 { animation-delay: 0.45s; }
+.d-5 { animation-delay: 0.6s; }
+.d-6 { animation-delay: 0.75s; }
+
+/* --- Animated gradient headline text --- */
+@keyframes gradient-x {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.text-gradient-animate {
+  background: linear-gradient(90deg, #bac8dc, #7dd3fc, #d6e4f9, #afc9ea, #bac8dc);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: gradient-x 6s ease-in-out infinite;
+}
+
+/* --- Morphing ambient blobs --- */
+@keyframes blob-morph {
+  0%, 100% {
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
+  33% {
+    border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+    transform: translate(30px, -40px) scale(1.08) rotate(20deg);
+  }
+  66% {
+    border-radius: 50% 60% 30% 60% / 40% 30% 70% 50%;
+    transform: translate(-20px, 25px) scale(0.94) rotate(-15deg);
+  }
+}
+
+.animate-blob {
+  animation: blob-morph 18s ease-in-out infinite;
+}
+
+/* --- Card hover: lift + glow --- */
+.card-lift {
+  transition:
+    transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.45s ease,
+    border-color 0.45s ease;
+  will-change: transform;
+}
+
+.card-lift:hover {
+  transform: translateY(-8px) scale(1.015);
+  box-shadow:
+    0 22px 50px -12px rgba(0, 0, 0, 0.6),
+    0 0 32px -6px rgba(186, 200, 220, 0.18);
+}
+
+/* --- Shine sweep across cards on hover --- */
+.card-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-shine::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -80%;
+  height: 100%;
+  width: 50%;
+  transform: skewX(-22deg);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+  transition: left 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.card-shine:hover::before {
+  left: 130%;
+}
+
+/* --- Button shine sweep --- */
+.btn-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-shine::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -150%;
+  height: 100%;
+  width: 60%;
+  transform: skewX(-20deg);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.6s ease;
+  pointer-events: none;
+}
+
+.btn-shine:hover::after {
+  left: 150%;
+}
+
+/* --- Animated underline for nav links --- */
+.nav-link {
+  position: relative;
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  height: 2px;
+  width: 100%;
+  background: #bac8dc;
+  border-radius: 999px;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.nav-link:hover::after {
+  transform: scaleX(1);
+}
+
+/* --- Skeleton shimmer wave --- */
+@keyframes shimmer-slide {
+  100% { transform: translateX(100%); }
+}
+
+.skeleton-shimmer {
+  position: relative;
+  overflow: hidden;
+  background: rgba(30, 41, 59, 0.8);
+}
+
+.skeleton-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.07), transparent);
+  animation: shimmer-slide 1.6s ease-in-out infinite;
+}
+
+/* --- Search bar focus glow --- */
+.search-glow {
+  transition: box-shadow 0.4s ease, border-color 0.4s ease, transform 0.3s ease;
+}
+
+.search-glow:focus-within {
+  border-color: rgba(186, 200, 220, 0.5);
+  box-shadow:
+    0 0 0 1px rgba(186, 200, 220, 0.35),
+    0 0 28px rgba(186, 200, 220, 0.2);
+  transform: translateY(-1px);
+}
+
+/* --- Search dropdown pop-in --- */
+.dropdown-pop {
+  animation: scale-in 0.25s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+  transform-origin: top center;
+}
+
+/* --- Rating star pop --- */
+@keyframes star-pop {
+  0% { transform: scale(0.5) rotate(-18deg); }
+  60% { transform: scale(1.3) rotate(8deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+.rating-star.active {
+  animation: star-pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* --- Star twinkle (decorative) --- */
+@keyframes twinkle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(0.85); }
+}
+
+.animate-twinkle {
+  animation: twinkle 2.4s ease-in-out infinite;
+}
+
+/* --- Progress bar grow --- */
+@keyframes bar-grow {
+  from { width: 0; }
+}
+
+.bar-grow {
+  animation: bar-grow 1.4s cubic-bezier(0.2, 0.8, 0.2, 1) 0.9s backwards;
+}
+
+/* --- Icon bounce on group hover --- */
+.group:hover .icon-pop {
+  transform: scale(1.2) rotate(-8deg);
+}
+
+.icon-pop {
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: inline-block;
+}
+
+.hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* --- Respect reduced-motion preferences --- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 ::-webkit-scrollbar {
   width: 10px;
 }

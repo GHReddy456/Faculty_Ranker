@@ -8,19 +8,19 @@ export default function FacultyCard(props: {
   const faculty = props.faculty;
 
   return (
-    <div className="glass-card inner-glow h-full rounded-[1.75rem] p-5 transition duration-300 hover:-translate-y-1 hover:border-primary/40">
+    <div className="glass-card inner-glow card-lift card-shine group h-full rounded-[1.75rem] p-5 hover:border-primary/40">
       <div className="flex gap-4">
-        <div className="shrink-0">
+        <div className="shrink-0 overflow-hidden rounded-2xl">
           <FallbackImage
             src={faculty.image_url}
             alt={faculty.name}
             width={96}
             height={96}
-            className="h-24 w-24 rounded-2xl border border-white/10 bg-slate-900 object-cover"
+            className="h-24 w-24 rounded-2xl border border-white/10 bg-slate-900 object-cover transition-transform duration-500 ease-out group-hover:scale-110"
           />
         </div>
         <div className="min-w-0">
-          <h1 className="text-lg font-semibold text-white">{faculty.name}</h1>
+          <h1 className="text-lg font-semibold text-white transition-colors duration-300 group-hover:text-primary">{faculty.name}</h1>
           <p className="mt-2 line-clamp-3 text-sm leading-6 text-slate-400">
             {faculty.specialization}
           </p>
@@ -48,7 +48,7 @@ export default function FacultyCard(props: {
         )}
       </div>
 
-      <div className="mt-5 flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-3 py-3 text-sm text-slate-300">
+      <div className="mt-5 flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-3 py-3 text-sm text-slate-300 transition-colors duration-300 group-hover:border-primary/20 group-hover:bg-white/10">
         <span>Student reviews</span>
         <span className="font-semibold text-primary">
           {Math.max(
@@ -69,7 +69,7 @@ const createRatingTray = (
   color: string,
 ) => {
   return (
-    <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-slate-900/40 px-3 py-3">
+    <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-slate-900/40 px-3 py-3 transition-all duration-300 hover:border-white/25 hover:bg-slate-900/70">
       <div>
         <p className="text-sm font-medium text-slate-300">{label}</p>
       </div>

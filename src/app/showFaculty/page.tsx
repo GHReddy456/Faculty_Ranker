@@ -104,29 +104,29 @@ export default function RenderFacultyGrid() {
   return (
     <div className="min-h-screen flex flex-col overflow-x-hidden bg-surface-dim text-on-surface selection:bg-primary selection:text-primary-container font-body-md" suppressHydrationWarning>
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="blob absolute top-[-10%] left-[-10%] h-[500px] w-[500px] rounded-full bg-primary/20 animate-float" />
-        <div className="blob absolute bottom-[-10%] right-[-5%] h-[600px] w-[600px] rounded-full bg-tertiary/20 animate-float" style={{ animationDelay: "-3s" }} />
-        <div className="blob absolute right-[10%] top-[40%] h-[300px] w-[300px] rounded-full bg-secondary/15 animate-float" style={{ animationDelay: "-1.5s" }} />
+        <div className="blob absolute top-[-10%] left-[-10%] h-[500px] w-[500px] rounded-full bg-primary/20 animate-blob" />
+        <div className="blob absolute bottom-[-10%] right-[-5%] h-[600px] w-[600px] rounded-full bg-tertiary/20 animate-blob" style={{ animationDelay: "-6s" }} />
+        <div className="blob absolute right-[10%] top-[40%] h-[300px] w-[300px] rounded-full bg-secondary/15 animate-blob" style={{ animationDelay: "-12s" }} />
       </div>
 
-      <header className="fixed top-0 left-0 z-50 flex w-full items-center justify-between border-b border-white/10 bg-surface-dim/80 px-margin-mobile py-4 shadow-lg shadow-surface-dim/20 backdrop-blur-xl md:px-margin-desktop">
+      <header className="anim-slide-down fixed top-0 left-0 z-50 flex w-full items-center justify-between border-b border-white/10 bg-surface-dim/80 px-margin-mobile py-4 shadow-lg shadow-surface-dim/20 backdrop-blur-xl md:px-margin-desktop">
         <div className="flex items-center gap-4">
-          <Link className="flex items-center text-on-surface-variant transition-colors hover:text-on-surface" href="/">
-            <span className="material-symbols-outlined mr-2">arrow_back</span>
+          <Link className="group flex items-center text-on-surface-variant transition-colors hover:text-on-surface" href="/">
+            <span className="material-symbols-outlined mr-2 transition-transform duration-300 group-hover:-translate-x-1">arrow_back</span>
           </Link>
           <span className="font-headline-md text-headline-md font-bold text-on-surface">Faculty Ranker</span>
         </div>
         <nav className="hidden items-center gap-8 md:flex">
           <Link className="border-b-2 border-primary pb-1 font-label-md text-label-md text-primary" href="/showFaculty">All Faculty</Link>
-          <Link className="font-label-md text-label-md text-on-surface-variant transition-all duration-300 hover:text-on-surface" href="/">Home</Link>
+          <Link className="nav-link font-label-md text-label-md text-on-surface-variant transition-all duration-300 hover:text-on-surface" href="/">Home</Link>
         </nav>
         <div className="flex items-center gap-4">
           {!user ? (
-            <button onClick={signInWithGoogle} className="rounded-lg border border-primary/30 bg-primary px-6 py-2 font-label-md text-label-md text-on-primary-fixed transition-all duration-300 active:scale-95 hover:bg-primary/90">
+            <button onClick={signInWithGoogle} className="btn-shine rounded-lg border border-primary/30 bg-primary px-6 py-2 font-label-md text-label-md text-on-primary-fixed transition-all duration-300 active:scale-95 hover:bg-primary/90 hover:shadow-[0_0_16px_rgba(186,200,220,0.35)]">
               Sign In
             </button>
           ) : (
-            <button onClick={signOutWithGoogle} className="rounded-lg border border-error/30 bg-error/10 px-6 py-2 font-label-md text-label-md text-error transition-all duration-300 active:scale-95 hover:bg-error/20">
+            <button onClick={signOutWithGoogle} className="btn-shine rounded-lg border border-error/30 bg-error/10 px-6 py-2 font-label-md text-label-md text-error transition-all duration-300 active:scale-95 hover:bg-error/20">
               Sign Out
             </button>
           )}
@@ -135,17 +135,17 @@ export default function RenderFacultyGrid() {
 
       <main className="flex flex-grow flex-col px-margin-mobile pb-16 pt-32 md:px-margin-desktop">
         <div className="container-max mx-auto w-full space-y-8">
-          <section className="glass-card relative z-10 overflow-visible rounded-[2rem] p-6 sm:p-8 lg:p-10">
+          <section className="glass-card anim-rise relative z-10 overflow-visible rounded-[2rem] p-6 sm:p-8 lg:p-10">
             <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
               <div className="max-w-2xl">
-                <p className="text-sm uppercase tracking-[0.35em] text-primary/80">Academic transparency</p>
-                <h1 className="mt-3 text-4xl font-semibold text-white sm:text-5xl">All Faculty</h1>
-                <p className="mt-4 text-lg leading-8 text-slate-300">
+                <p className="anim-rise d-1 text-sm uppercase tracking-[0.35em] text-primary/80">Academic transparency</p>
+                <h1 className="anim-blur d-2 mt-3 text-4xl font-semibold text-white sm:text-5xl">All Faculty</h1>
+                <p className="anim-rise d-3 mt-4 text-lg leading-8 text-slate-300">
                   Explore transparent faculty performance insights across attendance, correction, and teaching metrics for VIT-AP University.
                 </p>
               </div>
               <FacultyFilterSearchBar
-                className="w-full max-w-xl lg:ml-auto"
+                className="anim-rise d-3 w-full max-w-xl lg:ml-auto"
                 value={searchTerm}
                 onChange={(value) => {
                   setSearchTerm(value);
@@ -157,10 +157,16 @@ export default function RenderFacultyGrid() {
 
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
             {loading
-              ? [...Array(9)].map((_, index) => <LoadingCardComponent key={index} />)
-              : faculty_details_with_ratings.map((faculty) => (
+              ? [...Array(9)].map((_, index) => (
+                  <div key={index} className="anim-rise" style={{ animationDelay: `${index * 60}ms` }}>
+                    <LoadingCardComponent />
+                  </div>
+                ))
+              : faculty_details_with_ratings.map((faculty, index) => (
                   <Link
                     key={faculty.id}
+                    className="anim-rise block h-full"
+                    style={{ animationDelay: `${index * 80}ms` }}
                     href={{
                       pathname: `/faculty/${faculty.id}`,
                       query: {
@@ -183,7 +189,7 @@ export default function RenderFacultyGrid() {
                 setIndex((current) => Math.max(0, current - 1));
               }}
               disabled={pageIndex === 0}
-              className="rounded-full border border-white/10 bg-white/10 px-5 py-2 text-sm font-semibold text-slate-100 transition hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-50"
+              className="rounded-full border border-white/10 bg-white/10 px-5 py-2 text-sm font-semibold text-slate-100 transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/20 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
             >
               Previous
             </button>
@@ -195,7 +201,7 @@ export default function RenderFacultyGrid() {
                 setIndex((current) => Math.min(totalPages - 1, current + 1));
               }}
               disabled={pageIndex >= totalPages - 1}
-              className="rounded-full border border-primary/30 bg-primary/10 px-5 py-2 text-sm font-semibold text-primary transition hover:bg-primary/20 disabled:cursor-not-allowed disabled:opacity-50"
+              className="btn-shine rounded-full border border-primary/30 bg-primary/10 px-5 py-2 text-sm font-semibold text-primary transition-all duration-300 hover:-translate-y-0.5 hover:bg-primary/20 hover:shadow-[0_0_16px_rgba(186,200,220,0.25)] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
             >
               Next
             </button>
@@ -284,7 +290,7 @@ function FacultyFilterSearchBar({
                 width: dropdownStyle.width,
               }}
             >
-              <div className="relative z-[10000] max-h-52 overflow-y-auto rounded-2xl border border-white/10 bg-slate-950/95 shadow-2xl shadow-slate-950/50">
+              <div className="dropdown-pop relative z-[10000] max-h-52 overflow-y-auto rounded-2xl border border-white/10 bg-slate-950/95 shadow-2xl shadow-slate-950/50">
                 {filteredData.map((faculty) => (
                   <Link
                     key={faculty.id}
@@ -295,7 +301,7 @@ function FacultyFilterSearchBar({
                       },
                     }}
                   >
-                    <div className="flex items-center gap-3 p-3 transition hover:bg-white/10">
+                    <div className="flex items-center gap-3 p-3 transition-all duration-200 hover:translate-x-1 hover:bg-white/10">
                       <FallbackImage
                         src={faculty.image_url}
                         width={36}

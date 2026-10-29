@@ -9,8 +9,8 @@ export function SearchBar({
 }) {
   return (
     <div className={"relative isolate z-[200] w-full max-w-2xl " + className}>
-      <div className="relative flex h-14 w-full items-center overflow-visible rounded-full border border-white/10 bg-white/5 shadow-lg shadow-slate-950/40 backdrop-blur-xl">
-        <div className="grid h-full w-14 place-items-center text-slate-400">
+      <div className="search-glow group relative flex h-14 w-full items-center overflow-visible rounded-full border border-white/10 bg-white/5 shadow-lg shadow-slate-950/40 backdrop-blur-xl">
+        <div className="grid h-full w-14 place-items-center text-slate-400 transition-colors duration-300 group-focus-within:text-primary">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-5 w-5"

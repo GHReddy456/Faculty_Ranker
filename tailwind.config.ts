@@ -93,12 +93,12 @@ const config: Config = {
       },
       keyframes: {
         "fade-in": {
-          "0%": { opacity: "0", transform: "translateY(5px)" },
+          "0%": { opacity: "0", transform: "translateY(12px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         }
       },
       animation: {
-        "fade-in": "fade-in 0.3s ease-out forwards",
+        "fade-in": "fade-in 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) forwards",
       }
     },
   },
